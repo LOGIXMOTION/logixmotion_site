@@ -2,9 +2,11 @@
 
 echo "🚀 Deploying Logixmotion Site..."
 
-# Stop and remove existing container
+# Stop and remove existing container (including orphans)
 echo "📦 Stopping existing container..."
-docker compose down
+docker compose down --remove-orphans
+docker stop logixmotion_web 2>/dev/null || true
+docker rm logixmotion_web 2>/dev/null || true
 
 # Rebuild the image
 echo "🔨 Building new image..."
