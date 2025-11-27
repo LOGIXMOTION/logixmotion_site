@@ -7,3 +7,10 @@ services:
       - "8085:3000"
     env_file:
       - .env
+    networks:
+      - proxy-manager_default
+      - default
+
+networks:
+  proxy-manager_default:
+    external: true
