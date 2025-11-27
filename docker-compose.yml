@@ -1,0 +1,10 @@
+version: '3.8'
+services:
+  logixmotion:
+    build: .
+    container_name: logixmotion_web
+    restart: unless-stopped
+    ports:
+      - "8085:3000"
+    env_file:
+      - .env
