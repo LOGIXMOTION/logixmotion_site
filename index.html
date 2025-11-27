@@ -884,7 +884,8 @@
 
           <form
             class="space-y-6"
-            onsubmit="event.preventDefault(); showModal();"
+            id="contact-form"
+            onsubmit="submitForm(event)"
           >
             <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
               <div class="relative">
@@ -1371,13 +1372,29 @@
       });
 
       // Modal Logic
-      function showModal() {
+      function showModal(success = true, message = null) {
         const modal = document.getElementById("modal");
+        const title = modal.querySelector("h3");
+        const desc = modal.querySelector("p");
+        const iconContainer = modal.querySelector(".w-16");
+        const icon = iconContainer.querySelector("i");
+        
+        if (success) {
+            title.innerText = "Message Received";
+            desc.innerText = "Thank you. Our team will analyze your request and respond shortly.";
+            icon.className = "fas fa-check text-3xl text-brand-accent";
+            iconContainer.className = "w-16 h-16 bg-brand-accent/20 rounded-full flex items-center justify-center mx-auto mb-4";
+        } else {
+            title.innerText = "Transmission Failed";
+            desc.innerText = message || "Something went wrong. Please try again or email us directly.";
+            icon.className = "fas fa-exclamation-triangle text-3xl text-red-500";
+            iconContainer.className = "w-16 h-16 bg-red-500/20 rounded-full flex items-center justify-center mx-auto mb-4";
+        }
+
         modal.style.pointerEvents = "auto";
         modal.style.opacity = "1";
         modal.querySelector("#modal-content").classList.remove("scale-90");
         modal.querySelector("#modal-content").classList.add("scale-100");
-        document.querySelector("form").reset();
       }
 
       function hideModal() {
@@ -1386,6 +1403,49 @@
         modal.style.pointerEvents = "none";
         modal.querySelector("#modal-content").classList.add("scale-90");
         modal.querySelector("#modal-content").classList.remove("scale-100");
+      }
+
+      async function submitForm(event) {
+        event.preventDefault();
+        
+        const form = document.getElementById('contact-form');
+        const submitBtn = form.querySelector('button[type="submit"]');
+        const originalBtnText = submitBtn.innerText;
+        
+        // Loading State
+        submitBtn.disabled = true;
+        submitBtn.innerText = "TRANSMITTING...";
+        
+        const formData = {
+            name: document.getElementById('name').value,
+            email: document.getElementById('email').value,
+            message: document.getElementById('message').value
+        };
+
+        try {
+            const response = await fetch('/send-email', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify(formData)
+            });
+
+            const result = await response.json();
+
+            if (result.success) {
+                showModal(true);
+                form.reset();
+            } else {
+                showModal(false, result.message);
+            }
+        } catch (error) {
+            console.error('Error:', error);
+            showModal(false, "Network error. Please check your connection.");
+        } finally {
+            submitBtn.disabled = false;
+            submitBtn.innerText = originalBtnText;
+        }
       }
     </script>
   </body>
