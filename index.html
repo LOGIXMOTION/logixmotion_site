@@ -1,1452 +1,1934 @@
 <!DOCTYPE html>
-<html lang="en" class="scroll-smooth">
+<html lang="en">
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Logixmotion | Software & Hardware Solutions</title>
+    <title>Logixmotion - Software &amp; Hardware Engineering Studio</title>
+    <meta
+      name="description"
+      content="LOGIXMOTION is a software and hardware engineering studio. Embedded systems, sensor-driven products, and real-time map interfaces for asset tracking."
+    />
+    <meta name="theme-color" content="#F3F4F1" />
+    <link
+      rel="icon"
+      href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'><rect width='64' height='64' fill='%23F3F4F1'/><rect x='12' y='12' width='40' height='40' fill='%230D2FC4'/><circle cx='32' cy='32' r='7' fill='%23F3F4F1'/></svg>"
+    />
 
-    <script src="https://cdn.tailwindcss.com"></script>
-
+    <!-- Motion: anime.js (same proven build as before) -->
     <script src="https://cdnjs.cloudflare.com/ajax/libs/animejs/3.2.1/anime.min.js"></script>
 
-    <link
-      rel="stylesheet"
-      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css"
-    />
+    <!-- Map demo -->
+    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
 
+    <!-- Type: Schibsted Grotesk (display) · Hanken Grotesk (text) · Spline Sans Mono (data) -->
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
     <link
-      rel="stylesheet"
-      href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css"
-    />
-
-    <link
-      href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;500;700;900&family=Rajdhani:wght@300;400;500;600;700&display=swap"
+      href="https://fonts.googleapis.com/css2?family=Schibsted+Grotesk:wght@500;600;700;800&family=Hanken+Grotesk:wght@400;500;600;700&family=Spline+Sans+Mono:wght@400;500&display=swap"
       rel="stylesheet"
     />
 
+    <!-- Sets initial hidden states only when animation will run (no-JS and reduced-motion stay visible) -->
     <script>
-      tailwind.config = {
-        theme: {
-          extend: {
-            colors: {
-              brand: {
-                dark: "#0B0C15",
-                accent: "#00F0FF", // Cyber Cyan
-                secondary: "#7000FF", // Neon Purple
-                surface: "#151725",
-              },
-            },
-            fontFamily: {
-              orbitron: ["Orbitron", "sans-serif"],
-              rajdhani: ["Rajdhani", "sans-serif"],
-            },
-          },
-        },
-      };
+      document.documentElement.classList.add(
+        window.matchMedia && matchMedia("(prefers-reduced-motion: reduce)").matches
+          ? "no-anim"
+          : "anim"
+      );
     </script>
 
     <style>
-      /* Custom Scrollbar */
-      ::-webkit-scrollbar {
-        width: 8px;
+      /* ============================================================
+         LOGIXMOTION - design tokens
+         Paper & cobalt: a precision-instrument palette.
+         ============================================================ */
+      :root {
+        --paper: #f3f4f1; /* cool chalk paper */
+        --paper-2: #fbfbf9; /* panel surface */
+        --ink: #16181b; /* near-black ink */
+        --ink-2: #0f1115; /* dark section ground */
+        --ink-soft: #565b62; /* secondary text */
+        --line: #d9dbd4; /* hairline rules */
+        --line-dark: #262b33; /* hairlines on dark */
+        --blue: #0d2fc4; /* cobalt - the one accent */
+        --blue-deep: #0a2399;
+        --blue-soft: #7b93ff; /* cobalt for dark ground */
+        --ok: #7fd99a;
+        --err: #ff8b8b;
+
+        --font-display: "Schibsted Grotesk", "Helvetica Neue", Arial, sans-serif;
+        --font-body: "Hanken Grotesk", "Helvetica Neue", Arial, sans-serif;
+        --font-mono: "Spline Sans Mono", "SFMono-Regular", Consolas, monospace;
+
+        --nav-h: 72px;
       }
-      ::-webkit-scrollbar-track {
-        background: #0b0c15;
+
+      * {
+        margin: 0;
+        padding: 0;
+        box-sizing: border-box;
       }
-      ::-webkit-scrollbar-thumb {
-        background: #333;
-        border-radius: 4px;
-      }
-      ::-webkit-scrollbar-thumb:hover {
-        background: #00f0ff;
+
+      html {
+        scroll-behavior: smooth;
+        scroll-padding-top: calc(var(--nav-h) + 16px);
       }
 
       body {
-        background-color: #0b0c15;
-        color: #fff;
+        background: var(--paper);
+        color: var(--ink);
+        font: 400 1rem/1.65 var(--font-body);
+        -webkit-font-smoothing: antialiased;
+        text-rendering: optimizeLegibility;
         overflow-x: hidden;
       }
 
-      /* --- HERO & BACKGROUND --- */
-      #canvas-container {
-        position: absolute;
-        top: 0;
-        left: 0;
-        width: 100%;
+      ::selection {
+        background: var(--blue);
+        color: #fff;
+      }
+
+      img,
+      svg {
+        display: block;
+        max-width: 100%;
+      }
+
+      a {
+        color: inherit;
+      }
+
+      :focus-visible {
+        outline: 2px solid var(--blue);
+        outline-offset: 3px;
+        border-radius: 1px;
+      }
+
+      .wrap {
+        max-width: 1180px;
+        margin-inline: auto;
+        padding-inline: clamp(20px, 4vw, 40px);
+      }
+
+      /* ---- micro label (mono kicker) ---- */
+      .k {
+        font: 500 0.72rem/1.4 var(--font-mono);
+        letter-spacing: 0.14em;
+        text-transform: uppercase;
+        color: var(--ink-soft);
+      }
+      .k--blue {
+        color: var(--blue);
+      }
+
+      /* ---- buttons ---- */
+      .btn {
+        display: inline-flex;
+        align-items: center;
+        gap: 10px;
+        font: 600 0.95rem/1 var(--font-body);
+        padding: 14px 22px;
+        border: 1px solid var(--ink);
+        border-radius: 2px;
+        background: transparent;
+        color: var(--ink);
+        text-decoration: none;
+        cursor: pointer;
+        transition: background 0.18s ease, color 0.18s ease, border-color 0.18s ease;
+      }
+      .btn:hover {
+        background: var(--ink);
+        color: var(--paper);
+      }
+      .btn--primary {
+        background: var(--blue);
+        border-color: var(--blue);
+        color: #fff;
+      }
+      .btn--primary:hover {
+        background: var(--blue-deep);
+        border-color: var(--blue-deep);
+        color: #fff;
+      }
+      .btn--sm {
+        padding: 10px 16px;
+        font-size: 0.88rem;
+      }
+      .btn .arr {
+        transition: transform 0.18s ease;
+      }
+      .btn:hover .arr {
+        transform: translateX(3px);
+      }
+
+      /* ============================================================
+         NAV
+         ============================================================ */
+      .nav {
+        position: fixed;
+        inset: 0 0 auto 0;
+        height: var(--nav-h);
+        z-index: 100;
+        background: rgba(243, 244, 241, 0.86);
+        backdrop-filter: blur(12px) saturate(1.15);
+        -webkit-backdrop-filter: blur(12px) saturate(1.15);
+        border-bottom: 1px solid transparent;
+        transition: border-color 0.25s ease;
+      }
+      .nav.scrolled {
+        border-bottom-color: var(--line);
+      }
+      .nav .wrap {
         height: 100%;
-        z-index: 0;
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        gap: 24px;
+      }
+      .brand {
+        display: inline-flex;
+        align-items: center;
+        gap: 11px;
+        text-decoration: none;
+        font: 700 1.15rem/1 var(--font-display);
+        letter-spacing: -0.015em;
+      }
+      .brand-mark {
+        width: 11px;
+        height: 11px;
+        background: var(--blue);
+        flex: none;
+      }
+      .nav-links {
+        display: flex;
+        align-items: center;
+        gap: 30px;
+      }
+      .nav-links a:not(.btn) {
+        font: 600 0.92rem/1 var(--font-body);
+        color: var(--ink-soft);
+        text-decoration: none;
+        padding: 8px 0;
+        transition: color 0.15s ease;
+      }
+      .nav-links a:not(.btn):hover {
+        color: var(--ink);
+        text-decoration: underline;
+        text-underline-offset: 6px;
+        text-decoration-thickness: 1.5px;
+        text-decoration-color: var(--blue);
       }
 
-      /* Perspective Grid Floor */
-      .cyber-grid {
+      /* mobile menu */
+      .mbtn {
+        display: none;
+        width: 42px;
+        height: 42px;
+        border: 1px solid var(--ink);
+        border-radius: 2px;
+        background: transparent;
+        cursor: pointer;
+        position: relative;
+      }
+      .mbtn span {
         position: absolute;
-        bottom: 0;
-        left: -50%;
-        width: 200%;
-        height: 50%;
-        background-image: linear-gradient(
-            rgba(0, 240, 255, 0.1) 1px,
-            transparent 1px
-          ),
-          linear-gradient(90deg, rgba(0, 240, 255, 0.1) 1px, transparent 1px);
-        background-size: 40px 40px;
-        transform: perspective(500px) rotateX(60deg);
-        mask-image: linear-gradient(to top, rgba(0, 0, 0, 1), transparent);
-        -webkit-mask-image: linear-gradient(
-          to top,
-          rgba(0, 0, 0, 1),
-          transparent
-        );
-        z-index: 0;
-        pointer-events: none;
+        left: 11px;
+        right: 11px;
+        height: 1.5px;
+        background: var(--ink);
+        transition: transform 0.25s ease, top 0.25s ease;
+      }
+      .mbtn span:nth-child(1) {
+        top: 16px;
+      }
+      .mbtn span:nth-child(2) {
+        top: 24px;
+      }
+      .mbtn[aria-expanded="true"] span:nth-child(1) {
+        top: 20px;
+        transform: rotate(45deg);
+      }
+      .mbtn[aria-expanded="true"] span:nth-child(2) {
+        top: 20px;
+        transform: rotate(-45deg);
+      }
+      .mnav {
+        position: fixed;
+        top: var(--nav-h);
+        left: 0;
+        right: 0;
+        z-index: 99;
+        background: var(--paper);
+        border-bottom: 1px solid var(--ink);
+        display: none;
+      }
+      .mnav.open {
+        display: block;
+      }
+      .mnav a {
+        display: block;
+        padding: 18px clamp(20px, 4vw, 40px);
+        border-top: 1px solid var(--line);
+        font: 600 1.05rem/1 var(--font-body);
+        text-decoration: none;
+        color: var(--ink);
+      }
+      .mnav a.cta {
+        color: var(--blue);
       }
 
-      /* --- ANIMATIONS --- */
-      .neon-text {
-        text-shadow: 0 0 10px rgba(0, 240, 255, 0.5),
-          0 0 20px rgba(0, 240, 255, 0.3);
+      /* ============================================================
+         HERO
+         ============================================================ */
+      .hero {
+        padding: calc(var(--nav-h) + clamp(56px, 9vw, 110px)) 0 clamp(64px, 8vw, 104px);
       }
-
-      .cursor {
+      .hero .wrap {
+        display: grid;
+        grid-template-columns: minmax(0, 1fr) 380px;
+        gap: clamp(40px, 6vw, 80px);
+        align-items: center;
+      }
+      .hero-kicker {
+        display: inline-flex;
+        align-items: center;
+        gap: 10px;
+      }
+      .hero-kicker::before {
+        content: "";
+        width: 7px;
+        height: 7px;
+        background: var(--blue);
+      }
+      .hero-h {
+        font: 700 clamp(2.7rem, 6.6vw, 5.4rem) / 0.99 var(--font-display);
+        letter-spacing: -0.028em;
+        margin: 20px 0 22px;
+      }
+      .hw {
         display: inline-block;
-        width: 3px;
-        background-color: #00f0ff;
-        animation: blink 1s infinite;
+        overflow: hidden;
+        vertical-align: bottom;
+        padding-bottom: 0.08em;
+        margin-bottom: -0.08em;
       }
-      @keyframes blink {
+      .hw > span {
+        display: inline-block;
+      }
+      html.anim .hw > span {
+        transform: translateY(112%);
+      }
+      html.anim [data-hero] {
+        opacity: 0;
+      }
+      .hero-sub {
+        max-width: 54ch;
+        font-size: 1.07rem;
+        line-height: 1.72;
+        color: var(--ink-soft);
+      }
+      .hero-sub strong {
+        color: var(--ink);
+        font-weight: 600;
+      }
+      .hero-cta {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 14px;
+        margin-top: 36px;
+      }
+
+      /* ---- the instrument (signature element) ---- */
+      .inst {
+        border: 1px solid var(--ink);
+        border-radius: 2px;
+        background: var(--paper-2);
+      }
+      .inst-h {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        padding: 11px 14px;
+        border-bottom: 1px solid var(--line);
+      }
+      .live {
+        display: inline-flex;
+        align-items: center;
+        gap: 8px;
+      }
+      .live i {
+        width: 7px;
+        height: 7px;
+        border-radius: 50%;
+        background: var(--blue);
+        animation: livepulse 2.2s ease-in-out infinite;
+      }
+      @keyframes livepulse {
         0%,
         100% {
           opacity: 1;
         }
         50% {
-          opacity: 0;
+          opacity: 0.25;
         }
       }
+      .inst-svg {
+        padding: 16px 16px 8px;
+      }
+      .gyro-ring {
+        transform-box: view-box;
+        transform-origin: 180px 180px;
+      }
+      .inst-read {
+        border-top: 1px solid var(--line);
+        padding: 12px 14px;
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 7px 18px;
+        font: 400 0.78rem/1.3 var(--font-mono);
+      }
+      .inst-read b {
+        font-weight: 500;
+        color: var(--ink-soft);
+        margin-right: 8px;
+      }
+      .inst-read output {
+        color: var(--ink);
+        font-variant-numeric: tabular-nums;
+      }
+      .inst-f {
+        border-top: 1px solid var(--line);
+        padding: 9px 14px;
+        font: 400 0.66rem/1.5 var(--font-mono);
+        letter-spacing: 0.1em;
+        text-transform: uppercase;
+        color: var(--ink-soft);
+      }
 
-      /* Floating Cards Animation */
-      .float-element {
-        animation: float 6s ease-in-out infinite;
+      /* ============================================================
+         TICKER
+         ============================================================ */
+      .tick {
+        border-top: 1px solid var(--ink);
+        border-bottom: 1px solid var(--line);
+        padding: 15px 0;
+        overflow: hidden;
       }
-      .float-delay-1 {
-        animation-delay: 1s;
+      .tick-row {
+        display: flex;
+        width: max-content;
+        will-change: transform;
       }
-      .float-delay-2 {
-        animation-delay: 2s;
-      }
-      .float-delay-3 {
-        animation-delay: 3s;
-      }
-
-      @keyframes float {
-        0%,
-        100% {
-          transform: translateY(0);
-        }
-        50% {
-          transform: translateY(-20px);
-        }
-      }
-
-      /* Nav Hover Effect */
-      .nav-link {
+      .tick-row span {
+        font: 500 0.76rem/1 var(--font-mono);
+        letter-spacing: 0.18em;
+        text-transform: uppercase;
+        color: var(--ink-soft);
+        padding: 0 27px;
         position: relative;
+        white-space: nowrap;
       }
-      .nav-link::after {
+      .tick-row span::after {
         content: "";
         position: absolute;
-        bottom: -5px;
-        left: 0;
+        right: -2.5px;
+        top: 50%;
+        width: 5px;
+        height: 5px;
+        background: var(--blue);
+        transform: translateY(-50%);
+      }
+
+      /* ============================================================
+         SECTIONS - shared
+         ============================================================ */
+      .sec {
+        padding: clamp(72px, 9vw, 124px) 0;
+      }
+      html.anim [data-reveal] {
+        opacity: 0;
+        transform: translateY(26px);
+      }
+      .sec-head {
+        display: flex;
+        align-items: flex-end;
+        justify-content: space-between;
+        flex-wrap: wrap;
+        gap: 14px 24px;
+        border-top: 1px solid var(--ink);
+        padding-top: 18px;
+        margin-bottom: clamp(36px, 6vw, 62px);
+      }
+      .sec-title {
+        font: 700 clamp(1.9rem, 3.6vw, 3rem) / 1.04 var(--font-display);
+        letter-spacing: -0.02em;
+        margin-top: 10px;
+      }
+
+      /* ============================================================
+         WORK - case files
+         ============================================================ */
+      .case {
+        display: grid;
+        grid-template-columns: 1.05fr 1fr;
+        gap: clamp(28px, 5vw, 72px);
+        align-items: center;
+        padding: clamp(34px, 5vw, 58px) 0;
+        border-top: 1px solid var(--line);
+      }
+      .case:first-of-type {
+        border-top: 0;
+        padding-top: 0;
+      }
+      .case--flip .case-exh {
+        order: 2;
+      }
+      .case--flip .case-info {
+        order: 1;
+      }
+      .case-t {
+        font: 700 clamp(1.55rem, 2.6vw, 2.2rem) / 1.08 var(--font-display);
+        letter-spacing: -0.018em;
+        margin: 12px 0 14px;
+      }
+      .case-info p {
+        color: var(--ink-soft);
+        font-size: 1.02rem;
+        line-height: 1.72;
+        max-width: 52ch;
+      }
+      .chips {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 8px;
+        margin-top: 22px;
+      }
+      .chip {
+        font: 500 0.67rem/1 var(--font-mono);
+        letter-spacing: 0.1em;
+        text-transform: uppercase;
+        color: var(--ink-soft);
+        border: 1px solid var(--line);
+        padding: 7px 11px;
+        border-radius: 2px;
+        background: var(--paper-2);
+      }
+      .chip--nda {
+        border-color: var(--blue);
+        color: var(--blue);
+      }
+
+      /* exhibit frame (shared by pen + map) */
+      .exh {
+        border: 1px solid var(--ink);
+        border-radius: 2px;
+        background: var(--paper-2);
+        overflow: hidden;
+      }
+      .exh-h {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        gap: 12px;
+        padding: 10px 14px;
+        border-bottom: 1px solid var(--line);
+      }
+      .exh-f {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        gap: 12px;
+        padding: 9px 14px;
+        border-top: 1px solid var(--line);
+      }
+      .exh-f .k {
+        font-size: 0.64rem;
+        letter-spacing: 0.1em;
+      }
+      .mini {
+        font: 500 0.66rem/1 var(--font-mono);
+        letter-spacing: 0.12em;
+        text-transform: uppercase;
+        border: 1px solid var(--ink);
+        border-radius: 2px;
+        background: transparent;
+        color: var(--ink);
+        padding: 7px 12px;
+        cursor: pointer;
+        transition: background 0.15s ease, color 0.15s ease;
+      }
+      .mini:hover {
+        background: var(--ink);
+        color: var(--paper);
+      }
+      .pen-stage {
+        padding: 6px 8px 0;
+      }
+
+      /* map exhibit */
+      .map-wrap {
+        position: relative;
+        height: 420px;
+        background: #e9ebe6;
+      }
+      #demo-map {
+        position: absolute;
+        inset: 0;
+        cursor: crosshair;
+      }
+      .hud {
+        position: absolute;
+        top: 12px;
+        right: 12px;
+        z-index: 500;
+        min-width: 180px;
+        background: rgba(251, 251, 249, 0.92);
+        backdrop-filter: blur(6px);
+        border: 1px solid var(--ink);
+        border-radius: 2px;
+        padding: 11px 13px;
+        pointer-events: none;
+        font-family: var(--font-mono);
+      }
+      .hud-l {
+        font-size: 0.62rem;
+        letter-spacing: 0.12em;
+        text-transform: uppercase;
+        color: var(--ink-soft);
+        margin-bottom: 2px;
+      }
+      .hud-v {
+        font-size: 0.8rem;
+        color: var(--ink);
+        margin-bottom: 9px;
+        font-variant-numeric: tabular-nums;
+      }
+      .hud-v:last-child {
+        margin-bottom: 0;
+      }
+      .hud-v.go {
+        color: var(--blue);
+      }
+      .hud-v.ok {
+        color: #0b7a3b;
+      }
+      .unit {
         width: 0;
-        height: 2px;
-        background: #00f0ff;
-        transition: width 0.3s ease;
-        box-shadow: 0 0 10px #00f0ff;
+        height: 0;
+        border-left: 9px solid transparent;
+        border-right: 9px solid transparent;
+        border-bottom: 22px solid var(--blue);
+        filter: drop-shadow(0 1px 4px rgba(13, 47, 196, 0.45));
+        transform-origin: center 60%;
+        transition: transform 0.12s linear;
       }
-      .nav-link:hover::after {
-        width: 100%;
-      }
-
-      /* --- SECTIONS --- */
-      .reveal-section {
-        opacity: 0;
-        transform: translateY(30px);
-        transition: all 0.8s cubic-bezier(0.5, 0, 0, 1);
-      }
-      .reveal-section.active {
-        opacity: 1;
-        transform: translateY(0);
-      }
-      .portfolio-item {
-        opacity: 0;
-        transform: translateY(100px);
-      }
-
-      .glass-panel {
-        background: rgba(11, 12, 21, 0.8);
-        backdrop-filter: blur(12px);
-        -webkit-backdrop-filter: blur(12px);
-        border: 1px solid rgba(255, 255, 255, 0.08);
-      }
-
-      .hud-border {
-        border: 1px solid rgba(0, 240, 255, 0.3);
-        background: linear-gradient(
-          135deg,
-          rgba(0, 240, 255, 0.05) 0%,
-          transparent 100%
-        );
-      }
-
-      /* --- MAP UI STYLES --- */
-      .drone-icon {
+      .unit-icon {
         background: transparent;
         border: none;
       }
-      .drone-body {
-        width: 0;
-        height: 0;
-        border-left: 10px solid transparent;
-        border-right: 10px solid transparent;
-        border-bottom: 25px solid #00f0ff;
-        filter: drop-shadow(0 0 5px #00f0ff);
-        transform-origin: center center;
-        transition: transform 0.1s linear;
-      }
-
-      /* Target Ping Animation for Map */
       .ping-marker {
         width: 20px;
         height: 20px;
-        border: 2px solid #00f0ff;
+        border: 2px solid var(--blue);
         border-radius: 50%;
+        background: rgba(13, 47, 196, 0.18);
         animation: ping-expand 1s ease-out infinite;
-        background: rgba(0, 240, 255, 0.2);
       }
-
       @keyframes ping-expand {
         0% {
           transform: scale(0.5);
           opacity: 1;
         }
         100% {
-          transform: scale(2.5);
+          transform: scale(2.4);
           opacity: 0;
         }
       }
-
-      /* Circuit Line Animation */
-      .circuit-line {
-        position: absolute;
-        left: 50%;
-        top: 0;
-        bottom: 0;
-        width: 2px;
-        background: rgba(255, 255, 255, 0.1);
-        transform: translateX(-50%);
-        z-index: 0;
+      .leaflet-container {
+        font-family: var(--font-body);
+        background: #e9ebe6;
       }
-      .circuit-node {
-        position: absolute;
-        left: 50%;
-        transform: translateX(-50%);
-        width: 16px;
-        height: 16px;
-        background: #0b0c15;
-        border: 2px solid #00f0ff;
-        border-radius: 50%;
-        z-index: 1;
-        box-shadow: 0 0 10px #00f0ff;
+      .leaflet-control-attribution {
+        font: 400 10px/1.4 var(--font-mono) !important;
+        background: rgba(251, 251, 249, 0.82) !important;
+        color: var(--ink-soft) !important;
+      }
+      .leaflet-control-attribution a {
+        color: var(--blue) !important;
       }
 
-      /* Loader */
-      #loader {
-        position: fixed;
-        inset: 0;
-        background: #0b0c15;
-        z-index: 9999;
+      /* ============================================================
+         CAPABILITIES
+         ============================================================ */
+      .caps {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        border-top: 1px solid var(--line);
+      }
+      .cap {
+        padding: clamp(28px, 4vw, 46px) clamp(22px, 3vw, 42px) clamp(28px, 4vw, 46px) 0;
+        border-bottom: 1px solid var(--line);
+      }
+      .cap:nth-child(odd) {
+        border-right: 1px solid var(--line);
+      }
+      .cap:nth-child(even) {
+        padding-left: clamp(22px, 3vw, 42px);
+        padding-right: 0;
+      }
+      .cap:nth-last-child(-n + 2) {
+        border-bottom: 0;
+      }
+      .cap-t {
+        font: 700 1.34rem/1.18 var(--font-display);
+        letter-spacing: -0.012em;
+        margin: 13px 0 10px;
+      }
+      .cap p {
+        color: var(--ink-soft);
+        font-size: 0.99rem;
+        line-height: 1.66;
+        max-width: 46ch;
+      }
+      .cap-tools {
+        margin-top: 17px;
+        font: 400 0.7rem/1.7 var(--font-mono);
+        letter-spacing: 0.08em;
+        text-transform: uppercase;
+        color: var(--ink-soft);
+      }
+      .cap-tools b {
+        color: var(--blue);
+        font-weight: 500;
+      }
+
+      /* ============================================================
+         STUDIO
+         ============================================================ */
+      .studio-big {
+        font: 600 clamp(1.65rem, 3.4vw, 2.7rem) / 1.2 var(--font-display);
+        letter-spacing: -0.018em;
+        max-width: 26ch;
+      }
+      .studio-big em {
+        font-style: normal;
+        color: var(--blue);
+      }
+      .studio-p {
+        margin-top: 24px;
+        max-width: 62ch;
+        color: var(--ink-soft);
+        font-size: 1.04rem;
+        line-height: 1.72;
+      }
+
+      /* ============================================================
+         CONTACT (dark)
+         ============================================================ */
+      .contact {
+        background: var(--ink-2);
+        color: #e9eae6;
+      }
+      .contact .sec-head {
+        border-top-color: #3a4150;
+      }
+      .contact .wrap-grid {
+        display: grid;
+        grid-template-columns: 1fr 1.1fr;
+        gap: clamp(40px, 6vw, 84px);
+        align-items: start;
+      }
+      .contact .k {
+        color: #8a8f98;
+      }
+      .contact-t {
+        font: 700 clamp(2.1rem, 4.4vw, 3.4rem) / 1.03 var(--font-display);
+        letter-spacing: -0.024em;
+        color: #f4f5f2;
+        margin: 14px 0 18px;
+      }
+      .contact-p {
+        color: #a6abb4;
+        max-width: 46ch;
+        line-height: 1.72;
+      }
+      .maillink {
+        display: inline-block;
+        margin-top: 28px;
+        font: 500 0.95rem/1 var(--font-mono);
+        color: var(--blue-soft);
+        text-decoration: underline;
+        text-underline-offset: 5px;
+        transition: color 0.15s ease;
+      }
+      .maillink:hover {
+        color: #fff;
+      }
+      .f-row {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 16px;
+      }
+      .f-field {
+        margin-bottom: 18px;
+      }
+      .f-field label {
+        display: block;
+        font: 500 0.68rem/1 var(--font-mono);
+        letter-spacing: 0.13em;
+        text-transform: uppercase;
+        color: #8a8f98;
+        margin-bottom: 9px;
+      }
+      .f-field input,
+      .f-field textarea {
+        width: 100%;
+        background: #15181e;
+        border: 1px solid #2a2f38;
+        border-radius: 2px;
+        color: #f4f5f2;
+        font: 400 1rem/1.5 var(--font-body);
+        padding: 13px 14px;
+        transition: border-color 0.15s ease;
+      }
+      .f-field input::placeholder,
+      .f-field textarea::placeholder {
+        color: #5e646e;
+      }
+      .f-field input:focus,
+      .f-field textarea:focus {
+        outline: none;
+        border-color: var(--blue-soft);
+      }
+      .f-field textarea {
+        resize: vertical;
+        min-height: 132px;
+      }
+      .f-actions {
         display: flex;
-        justify-content: center;
         align-items: center;
-        flex-direction: column;
+        gap: 18px;
+        flex-wrap: wrap;
+        margin-top: 4px;
       }
-      .loader-bar {
-        width: 0%;
-        height: 4px;
-        background: #00f0ff;
-        transition: width 0.5s ease;
+      .contact .btn--primary:hover {
+        background: var(--blue-soft);
+        border-color: var(--blue-soft);
+        color: var(--ink-2);
+      }
+      .btn[disabled] {
+        opacity: 0.55;
+        cursor: progress;
+      }
+      .f-status {
+        font-size: 0.92rem;
+        min-height: 1.3em;
+      }
+      .f-status.ok {
+        color: var(--ok);
+      }
+      .f-status.err {
+        color: var(--err);
+      }
+
+      /* ============================================================
+         FOOTER (dark, continues contact ground)
+         ============================================================ */
+      .footer {
+        background: var(--ink-2);
+        color: #a6abb4;
+        border-top: 1px solid var(--line-dark);
+        padding: 46px 0 38px;
+      }
+      .footer-grid {
+        display: grid;
+        grid-template-columns: 1.6fr 1fr 1fr 1fr;
+        gap: 32px;
+      }
+      .footer .brand {
+        color: #f4f5f2;
+      }
+      .footer-note {
+        margin-top: 14px;
+        font-size: 0.88rem;
+        max-width: 30ch;
+        line-height: 1.6;
+      }
+      .footer .k {
+        color: #707682;
+        display: block;
+        margin-bottom: 14px;
+      }
+      .footer ul {
+        list-style: none;
+      }
+      .footer ul a {
+        display: inline-block;
+        padding: 5px 0;
+        font-size: 0.93rem;
+        color: #a6abb4;
+        text-decoration: none;
+        transition: color 0.15s ease;
+      }
+      .footer ul a:hover {
+        color: #fff;
+        text-decoration: underline;
+        text-underline-offset: 4px;
+        text-decoration-color: var(--blue-soft);
+      }
+      /* external-link arrow: nudged baseline, slides on hover */
+      .footer ul a .ext-arrow {
+        display: inline-block;
+        margin-left: 2px;
+        font-size: 0.82em;
+        transition: transform 0.15s ease;
+      }
+      .footer ul a:hover .ext-arrow,
+      .footer ul a:focus-visible .ext-arrow {
+        transform: translate(2px, -2px);
+      }
+      /* visually hidden, but available to assistive tech */
+      .sr-only {
+        position: absolute;
+        width: 1px;
+        height: 1px;
+        padding: 0;
+        margin: -1px;
+        overflow: hidden;
+        clip: rect(0, 0, 0, 0);
+        white-space: nowrap;
+        border: 0;
+      }
+      .footer-bottom {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        gap: 16px;
+        flex-wrap: wrap;
+        border-top: 1px solid var(--line-dark);
+        margin-top: 40px;
+        padding-top: 22px;
+        font-size: 0.84rem;
+        color: #707682;
+      }
+      .footer-bottom .k {
+        margin: 0;
+        font-size: 0.62rem;
+      }
+
+      /* ============================================================
+         RESPONSIVE
+         ============================================================ */
+      @media (max-width: 980px) {
+        .hero .wrap {
+          grid-template-columns: 1fr;
+        }
+        .inst {
+          max-width: 420px;
+        }
+        .case,
+        .contact .wrap-grid {
+          grid-template-columns: 1fr;
+          gap: 28px;
+        }
+        .case--flip .case-exh {
+          order: 1;
+        }
+        .case--flip .case-info {
+          order: 2;
+        }
+        .footer-grid {
+          grid-template-columns: 1fr 1fr;
+        }
+      }
+      @media (max-width: 768px) {
+        .nav-links {
+          display: none;
+        }
+        .mbtn {
+          display: block;
+        }
+        .map-wrap {
+          height: 340px;
+        }
+      }
+      @media (max-width: 600px) {
+        .caps {
+          grid-template-columns: 1fr;
+        }
+        .cap,
+        .cap:nth-child(even) {
+          padding-left: 0;
+          padding-right: 0;
+          border-right: 0 !important;
+        }
+        .cap:nth-last-child(-n + 2) {
+          border-bottom: 1px solid var(--line);
+        }
+        .cap:last-child {
+          border-bottom: 0;
+        }
+        .f-row {
+          grid-template-columns: 1fr;
+          gap: 0;
+        }
+        .footer-grid {
+          grid-template-columns: 1fr;
+          gap: 26px;
+        }
+      }
+
+      @media (prefers-reduced-motion: reduce) {
+        html {
+          scroll-behavior: auto;
+        }
+        *,
+        *::before,
+        *::after {
+          animation-duration: 0.01ms !important;
+          animation-iteration-count: 1 !important;
+          transition-duration: 0.01ms !important;
+        }
       }
     </style>
   </head>
-  <body class="font-rajdhani text-lg">
-    <div id="loader">
-      <div class="font-orbitron text-4xl mb-4 tracking-widest text-white">
-        LOGIX<span class="text-brand-accent">MOTION</span>
-      </div>
-      <div class="w-64 h-1 bg-gray-800 rounded overflow-hidden">
-        <div class="loader-bar" id="progress-bar"></div>
-      </div>
-    </div>
-
-    <nav
-      class="fixed top-0 w-full z-50 glass-panel border-b border-brand-accent/20 transition-all duration-300 h-20"
-      id="navbar"
-    >
-      <div
-        class="container mx-auto px-6 h-full flex justify-between items-center"
-      >
-        <a href="#" class="flex items-center gap-2 group">
-          <div
-            class="w-8 h-8 bg-brand-accent flex items-center justify-center rounded-sm rotate-45 group-hover:rotate-90 transition-transform duration-500"
-          >
-            <div class="w-4 h-4 bg-black -rotate-45"></div>
-          </div>
-          <span
-            class="text-2xl font-orbitron font-bold text-white tracking-wider ml-2"
-          >
-            LOGIX<span class="text-brand-accent">MOTION</span>
-          </span>
+  <body>
+    <!-- ============================ NAV ============================ -->
+    <header class="nav" id="navbar">
+      <div class="wrap">
+        <a href="#top" class="brand" aria-label="Logixmotion - home">
+          <span class="brand-mark" aria-hidden="true"></span>
+          LOGIXMOTION PRIVATE LIMITED
         </a>
 
-        <div
-          class="hidden md:flex items-center space-x-10 font-bold tracking-widest text-sm"
-        >
-          <a
-            href="#home"
-            class="nav-link hover:text-brand-accent transition-colors py-2"
-            >HOME</a
-          >
-          <a
-            href="#services"
-            class="nav-link hover:text-brand-accent transition-colors py-2"
-            >SERVICES</a
-          >
-          <a
-            href="#portfolio"
-            class="nav-link hover:text-brand-accent transition-colors py-2"
-            >WORKS</a
-          >
-          <a
-            href="#tech"
-            class="nav-link hover:text-brand-accent transition-colors py-2"
-            >TECH</a
-          >
+        <nav class="nav-links" aria-label="Primary">
+          <a href="#work">Work</a>
+          <a href="#capabilities">Capabilities</a>
+          <a href="#studio">Studio</a>
+          <a href="#contact" class="btn btn--sm btn--primary">Start a project</a>
+        </nav>
 
-          <a
-            href="#contact"
-            class="ml-4 relative px-6 py-2 overflow-hidden group border border-brand-accent rounded bg-brand-accent/5"
-          >
-            <span
-              class="absolute w-64 h-0 transition-all duration-300 origin-center rotate-45 -translate-x-20 bg-brand-accent top-1/2 group-hover:h-64 group-hover:-translate-y-32 ease"
-            ></span>
-            <span
-              class="relative text-brand-accent transition duration-300 group-hover:text-black font-orbitron"
-              >CONTACT</span
-            >
-          </a>
-        </div>
-
-        <button
-          id="mobile-menu-btn"
-          class="md:hidden text-brand-accent text-2xl"
-        >
-          <i class="fas fa-bars"></i>
+        <button class="mbtn" id="mbtn" aria-expanded="false" aria-controls="mnav" aria-label="Menu">
+          <span></span><span></span>
         </button>
       </div>
+    </header>
 
-      <div
-        id="mobile-menu"
-        class="hidden md:hidden bg-brand-dark/95 backdrop-blur-xl border-t border-brand-accent/20 absolute w-full"
-      >
-        <a
-          href="#home"
-          class="block px-6 py-4 border-b border-white/5 hover:text-brand-accent hover:bg-white/5"
-          >HOME</a
-        >
-        <a
-          href="#services"
-          class="block px-6 py-4 border-b border-white/5 hover:text-brand-accent hover:bg-white/5"
-          >SERVICES</a
-        >
-        <a
-          href="#portfolio"
-          class="block px-6 py-4 border-b border-white/5 hover:text-brand-accent hover:bg-white/5"
-          >WORKS</a
-        >
-        <a
-          href="#contact"
-          class="block px-6 py-4 hover:text-brand-accent hover:bg-white/5"
-          >CONTACT</a
-        >
-      </div>
+    <nav class="mnav" id="mnav" aria-label="Mobile">
+      <a href="#work">Work</a>
+      <a href="#capabilities">Capabilities</a>
+      <a href="#studio">Studio</a>
+      <a href="#contact" class="cta">Start a project →</a>
     </nav>
 
-    <section
-      id="home"
-      class="relative min-h-screen flex items-center justify-center overflow-hidden pt-20"
-    >
-      <canvas id="canvas-container"></canvas>
-      <div class="cyber-grid"></div>
-      <div
-        class="absolute inset-0 bg-[radial-gradient(circle_at_center,transparent_0%,#0B0C15_90%)] z-0 pointer-events-none"
-      ></div>
+    <main id="top">
+      <!-- ============================ HERO ============================ -->
+      <section class="hero">
+        <div class="wrap">
+          <div class="hero-copy">
+            <p class="k hero-kicker" data-hero>Software &amp; hardware engineering</p>
 
-      <div
-        class="absolute left-10 top-1/3 hidden lg:block float-element float-delay-1 z-10"
-      >
-        <div class="hud-border p-4 w-48 rounded backdrop-blur-sm">
-          <div class="text-xs text-brand-accent mb-2 font-mono">CPU_LOAD</div>
-          <div class="w-full h-1 bg-gray-800 rounded overflow-hidden mb-2">
-            <div class="h-full bg-brand-accent w-[75%] animate-pulse"></div>
-          </div>
-          <div class="flex justify-between text-xs text-gray-400 font-mono">
-            <span>Core_01</span>
-            <span>78%</span>
-          </div>
-        </div>
-      </div>
+            <h1 class="hero-h">
+              <span class="hw"><span>Engineering</span></span>
+              <span class="hw"><span>for</span></span><br />
+              <span class="hw"><span>things</span></span>
+              <span class="hw"><span>that</span></span>
+              <span class="hw"><span>move.</span></span>
+            </h1>
 
-      <div
-        class="absolute right-10 bottom-1/3 hidden lg:block float-element float-delay-2 z-10"
-      >
-        <div class="hud-border p-4 w-56 rounded backdrop-blur-sm">
-          <div
-            class="text-xs text-brand-secondary mb-2 font-mono flex items-center gap-2"
-          >
-            <i class="fas fa-network-wired"></i> NETWORK_STATUS
-          </div>
-          <div class="space-y-1 font-mono text-[10px] text-gray-400">
-            <div class="flex justify-between">
-              <span>Packets_Sent:</span> <span class="text-white">8,421</span>
-            </div>
-            <div class="flex justify-between">
-              <span>Latency:</span> <span class="text-green-400">12ms</span>
-            </div>
-          </div>
-        </div>
-      </div>
-
-      <div class="container mx-auto px-6 z-10 text-center relative">
-        <div
-          class="inline-flex items-center gap-2 mb-6 px-4 py-1 border border-brand-accent/30 rounded-full text-xs text-brand-accent tracking-[0.2em] font-bold bg-brand-accent/5 fade-in-element backdrop-blur-md"
-        >
-          <div class="w-2 h-2 rounded-full bg-brand-accent animate-ping"></div>
-          SYSTEMS ONLINE
-        </div>
-
-        <h1
-          class="text-5xl md:text-8xl font-orbitron font-black mb-6 leading-tight neon-text"
-        >
-          WE BUILD THE <br />
-          <span id="typing-text" class="text-brand-accent"></span
-          ><span class="cursor">&nbsp;</span>
-        </h1>
-
-        <p
-          class="text-gray-400 max-w-2xl mx-auto mb-10 text-lg fade-in-element leading-relaxed"
-        >
-          Logixmotion specializes in bridging the gap between physical hardware
-          and digital intelligence. From
-          <span class="text-brand-accent">Embedded Systems</span> to
-          <span class="text-brand-secondary">Advanced Map UI</span>.
-        </p>
-
-        <div
-          class="flex flex-col md:flex-row justify-center gap-6 fade-in-element"
-        >
-          <a
-            href="#portfolio"
-            class="group relative px-8 py-4 bg-brand-accent text-brand-dark font-bold font-orbitron rounded overflow-hidden shadow-[0_0_20px_rgba(0,240,255,0.3)] hover:shadow-[0_0_40px_rgba(0,240,255,0.6)] transition-shadow"
-          >
-            <span
-              class="relative z-10 group-hover:text-white transition-colors duration-300"
-              >EXPLORE WORKS</span
-            >
-            <div
-              class="absolute inset-0 h-full w-full scale-0 rounded transition-all duration-300 group-hover:scale-150 group-hover:bg-brand-secondary origin-center rounded-full"
-            ></div>
-          </a>
-          <a
-            href="#contact"
-            class="px-8 py-4 border border-white/20 hover:border-brand-accent hover:text-brand-accent transition-all rounded font-bold backdrop-blur-sm font-orbitron"
-          >
-            START PROJECT
-          </a>
-        </div>
-      </div>
-    </section>
-
-    <section id="services" class="py-24 bg-brand-dark relative z-10">
-      <div class="container mx-auto px-6">
-        <div class="text-center mb-16 reveal-section">
-          <h2 class="text-4xl font-orbitron font-bold mb-4">
-            OUR <span class="text-brand-secondary">SERVICES</span>
-          </h2>
-          <div class="h-1 w-20 bg-brand-secondary mx-auto"></div>
-        </div>
-
-        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8">
-          <div
-            class="service-card p-8 rounded-xl bg-brand-surface border border-white/5 hover:border-brand-accent/50 hover:-translate-y-2 transition-all duration-300 group reveal-section"
-          >
-            <div
-              class="w-14 h-14 bg-brand-accent/10 rounded-lg flex items-center justify-center mb-6 group-hover:bg-brand-accent group-hover:text-black transition-colors shadow-[0_0_15px_rgba(0,240,255,0.2)]"
-            >
-              <i
-                class="fas fa-microchip text-2xl text-brand-accent group-hover:text-black"
-              ></i>
-            </div>
-            <h3 class="text-xl font-bold font-orbitron mb-3 text-white">
-              Embedded Systems
-            </h3>
-            <p class="text-gray-400 text-sm leading-relaxed">
-              Custom firmware, microcontroller programming, and IoT solutions
-              connecting the physical and digital worlds.
+            <p class="hero-sub" data-hero>
+              Logixmotion is an engineering studio working where hardware meets
+              software. We read motion straight from the sensor - a
+              <strong>gyroscope inside a smart pen</strong>, a
+              <strong>fleet of assets on a live map</strong> - and turn it into
+              products people can rely on.
             </p>
+
+            <div class="hero-cta" data-hero>
+              <a class="btn btn--primary" href="#work">See the work</a>
+              <a class="btn" href="#contact">Start a project <span class="arr">→</span></a>
+            </div>
           </div>
 
-          <div
-            class="service-card p-8 rounded-xl bg-brand-surface border border-white/5 hover:border-brand-accent/50 hover:-translate-y-2 transition-all duration-300 group reveal-section"
-            style="transition-delay: 100ms"
-          >
-            <div
-              class="w-14 h-14 bg-purple-500/10 rounded-lg flex items-center justify-center mb-6 group-hover:bg-purple-500 group-hover:text-white transition-colors shadow-[0_0_15px_rgba(112,0,255,0.2)]"
-            >
-              <i
-                class="fas fa-map-marked-alt text-2xl text-purple-500 group-hover:text-white"
-              ></i>
+          <!-- Signature element: a live motion instrument.
+               Move your cursor and the gimbal responds; the readout prints it. -->
+          <aside class="inst" data-hero aria-label="Interactive motion instrument demo">
+            <div class="inst-h">
+              <span class="k">Motion instrument</span>
+              <span class="live k k--blue"><i aria-hidden="true"></i>Live</span>
             </div>
-            <h3 class="text-xl font-bold font-orbitron mb-3 text-white">
-              Map UI & GIS
-            </h3>
-            <p class="text-gray-400 text-sm leading-relaxed">
-              Advanced mapping solutions using Leaflet and MapLibre. Custom tile
-              layers, geolocation, and spatial data visualization.
-            </p>
-          </div>
 
-          <div
-            class="service-card p-8 rounded-xl bg-brand-surface border border-white/5 hover:border-brand-accent/50 hover:-translate-y-2 transition-all duration-300 group reveal-section"
-            style="transition-delay: 200ms"
-          >
-            <div
-              class="w-14 h-14 bg-blue-500/10 rounded-lg flex items-center justify-center mb-6 group-hover:bg-blue-500 group-hover:text-white transition-colors shadow-[0_0_15px_rgba(59,130,246,0.2)]"
-            >
-              <i
-                class="fas fa-code text-2xl text-blue-500 group-hover:text-white"
-              ></i>
-            </div>
-            <h3 class="text-xl font-bold font-orbitron mb-3 text-white">
-              Software Dev
-            </h3>
-            <p class="text-gray-400 text-sm leading-relaxed">
-              Full-stack web and desktop applications. Python automation, robust
-              backends, and scalable architecture.
-            </p>
-          </div>
+            <div class="inst-svg">
+              <svg id="gyro" viewBox="0 0 360 360" role="img" aria-label="Animated gyroscope reacting to cursor movement" xmlns="http://www.w3.org/2000/svg">
+                <!-- tick marks are generated by script into this group -->
+                <g id="gyro-ticks"></g>
 
-          <div
-            class="service-card p-8 rounded-xl bg-brand-surface border border-white/5 hover:border-brand-accent/50 hover:-translate-y-2 transition-all duration-300 group reveal-section"
-            style="transition-delay: 300ms"
-          >
-            <div
-              class="w-14 h-14 bg-pink-500/10 rounded-lg flex items-center justify-center mb-6 group-hover:bg-pink-500 group-hover:text-white transition-colors shadow-[0_0_15px_rgba(236,72,153,0.2)]"
-            >
-              <i
-                class="fas fa-pen-nib text-2xl text-pink-500 group-hover:text-white"
-              ></i>
+                <!-- invisible track for the orbiting satellite dot -->
+                <ellipse id="orbit-track" cx="180" cy="180" rx="148" ry="60" fill="none" stroke="none" />
+
+                <g class="gyro-ring" id="ringA">
+                  <circle class="gyro-geo" cx="180" cy="180" r="148" fill="none" stroke="#16181B" stroke-width="1.4" />
+                </g>
+                <g class="gyro-ring" id="ringB">
+                  <ellipse class="gyro-geo" cx="180" cy="180" rx="148" ry="60" fill="none" stroke="#16181B" stroke-width="1.2" />
+                </g>
+                <g class="gyro-ring" id="ringC">
+                  <ellipse class="gyro-geo" cx="180" cy="180" rx="60" ry="148" fill="none" stroke="#16181B" stroke-width="1.2" />
+                </g>
+
+                <!-- crosshair + core -->
+                <line x1="180" y1="166" x2="180" y2="194" stroke="#16181B" stroke-width="1" opacity="0.55" />
+                <line x1="166" y1="180" x2="194" y2="180" stroke="#16181B" stroke-width="1" opacity="0.55" />
+                <circle cx="180" cy="180" r="5.5" fill="#0D2FC4" />
+
+                <!-- satellite -->
+                <circle id="orbit-dot" cx="0" cy="0" r="5" fill="#0D2FC4" />
+              </svg>
             </div>
-            <h3 class="text-xl font-bold font-orbitron mb-3 text-white">
-              UI/UX Design
-            </h3>
-            <p class="text-gray-400 text-sm leading-relaxed">
-              Futuristic, intuitive interfaces. We design user experiences that
-              are as beautiful as they are functional.
-            </p>
+
+            <div class="inst-read" aria-live="off">
+              <div><b>ω x</b><output id="r-wx">+000.0°/s</output></div>
+              <div><b>ω y</b><output id="r-wy">+000.0°/s</output></div>
+              <div><b>θ</b><output id="r-th">000.0°</output></div>
+              <div><b>src</b><output id="r-src">idle</output></div>
+            </div>
+
+            <div class="inst-f" id="inst-caption">Moves with your cursor - try it</div>
+          </aside>
+        </div>
+      </section>
+
+      <!-- ============================ TICKER ============================ -->
+      <div class="tick" aria-hidden="true">
+        <div class="tick-row" id="tick-row"></div>
+      </div>
+      <!-- ============================ WORK ============================ -->
+      <section class="sec" id="work">
+        <div class="wrap">
+          <header class="sec-head" data-reveal>
+            <div>
+              <p class="k k--blue">Selected work</p>
+              <h2 class="sec-title">Two projects we can show.<br />Quietly.</h2>
+            </div>
+            <p class="k">Client names withheld - NDA</p>
+          </header>
+
+          <!-- Case 01 - gyro smart pen -->
+          <article class="case">
+            <div class="case-exh" data-reveal>
+              <figure class="exh">
+                <div class="exh-h">
+                  <span class="k">Project 01 - Exhibit</span>
+                  <span class="k k--blue">Gyro → stroke</span>
+                </div>
+                <div class="pen-stage">
+                  <svg id="pen-svg" viewBox="0 0 360 210" role="img" aria-label="A handwriting stroke being reconstructed from sampled pen motion" xmlns="http://www.w3.org/2000/svg">
+                    <!-- faint guide grid -->
+                    <g stroke="#D9DBD4" stroke-width="1">
+                      <line x1="0" y1="70" x2="360" y2="70" stroke-dasharray="2 6" />
+                      <line x1="0" y1="125" x2="360" y2="125" />
+                      <line x1="0" y1="180" x2="360" y2="180" stroke-dasharray="2 6" />
+                    </g>
+                    <!-- the reconstructed stroke -->
+                    <path
+                      id="pen-path"
+                      d="M 28 150
+                         C 50 70, 88 62, 104 118
+                         C 113 152, 96 170, 83 154
+                         C 70 138, 96 96, 132 104
+                         C 168 112, 152 168, 192 142
+                         C 220 124, 214 84, 246 92
+                         C 278 100, 262 158, 300 138
+                         C 318 128, 328 112, 336 100"
+                      fill="none"
+                      stroke="#16181B"
+                      stroke-width="2.2"
+                      stroke-linecap="round"
+                    />
+                    <!-- sample points appended by script -->
+                    <g id="pen-dots"></g>
+                  </svg>
+                </div>
+                <figcaption class="exh-f">
+                  <span class="k">Stroke reconstructed from sampled motion</span>
+                  <button class="mini" id="pen-replay" type="button">Replay</button>
+                </figcaption>
+              </figure>
+            </div>
+
+            <div class="case-info" data-reveal data-delay="90">
+              <p class="k">Project 01 · Smart pen</p>
+              <h3 class="case-t">A pen that knows what the hand is doing</h3>
+              <p>
+                A hardware client came to us with a pen and a question: can its
+                gyroscope and other sensors tell us what's being written? We built the answer -
+                reading the sensors at the source and running the motion through
+                a custom AI pipeline that turns raw angular movement
+                into clean, usable stroke data.
+              </p>
+              <div class="chips">
+                <span class="chip">Gyroscope</span>
+                <span class="chip">Embedded</span>
+                <span class="chip">Vision Models</span>
+                <span class="chip">Sensors</span>
+                <span class="chip chip--nda">Under NDA</span>
+              </div>
+            </div>
+          </article>
+
+          <!-- Case 02 - live asset tracking -->
+          <article class="case case--flip">
+            <div class="case-exh" data-reveal>
+              <figure class="exh">
+                <div class="exh-h">
+                  <span class="k">Project 02 - Working demo</span>
+                  <span class="k k--blue">Click map to dispatch</span>
+                </div>
+                <div class="map-wrap">
+                  <div id="demo-map" aria-label="Interactive tracking map demo. Click to dispatch the unit."></div>
+                  <div class="hud" aria-hidden="true">
+                    <div class="hud-l">Target</div>
+                    <div class="hud-v" id="hud-coords">awaiting input</div>
+                    <div class="hud-l">Heading</div>
+                    <div class="hud-v" id="hud-hdg">-</div>
+                    <div class="hud-l">Status</div>
+                    <div class="hud-v" id="hud-status">Idle</div>
+                  </div>
+                </div>
+                <figcaption class="exh-f">
+                  <span class="k">Miniature of the real thing - live position, heading, status</span>
+                </figcaption>
+              </figure>
+            </div>
+
+            <div class="case-info" data-reveal data-delay="90">
+              <p class="k">Project 02 · Asset tracking</p>
+              <h3 class="case-t">Every asset on one live map</h3>
+              <p>
+                For a client we designed and built a comprehensive
+                tracking interface: assets live on the map with position,
+                heading and status readable at control-room distance. The
+                miniature here is a taste - click anywhere on it and the unit
+                computes its heading and goes.
+              </p>
+              <div class="chips">
+                <span class="chip">MapLibre</span>
+                <span class="chip">Leaflet</span>
+                <span class="chip">Real-time</span>
+                <span class="chip">IoT</span>
+                <span class="chip chip--nda">Under NDA</span>
+              </div>
+            </div>
+          </article>
+        </div>
+      </section>
+
+      <!-- ============================ CAPABILITIES ============================ -->
+      <section class="sec" id="capabilities" style="padding-top: 0">
+        <div class="wrap">
+          <header class="sec-head" data-reveal>
+            <div>
+              <p class="k k--blue">Capabilities</p>
+              <h2 class="sec-title">From the sensor to the screen</h2>
+            </div>
+            <p class="k">One team, both ends</p>
+          </header>
+
+          <div class="caps">
+            <div class="cap" data-reveal>
+              <p class="k">Embedded systems</p>
+              <h3 class="cap-t">Hardware that's honest</h3>
+              <p>
+                Firmware, sensor integration and the unglamorous low-level code
+                that keeps devices behaving the same on the thousandth run as
+                the first.
+              </p>
+              <p class="cap-tools"><b>//</b> C++ · Arduino · Raspberry Pi · Python</p>
+            </div>
+
+            <div class="cap" data-reveal data-delay="80">
+              <p class="k">Maps &amp; GIS</p>
+              <h3 class="cap-t">Spatial data, readable at a glance</h3>
+              <p>
+                Live tracking interfaces, custom tile layers, geolocation and
+                spatial visualisation - maps built to be operated, not just
+                looked at.
+              </p>
+              <p class="cap-tools"><b>//</b> Leaflet · MapLibre · Custom tiles</p>
+            </div>
+
+            <div class="cap" data-reveal data-delay="140">
+              <p class="k">Software development</p>
+              <h3 class="cap-t">Backends that stay up</h3>
+              <p>
+                Full-stack web applications, Python automation and robust,
+                scalable architecture - deployed and maintained in containers,
+                not in slides.
+              </p>
+              <p class="cap-tools"><b>//</b> Node.js · React · Docker · AWS</p>
+            </div>
+
+            <div class="cap" data-reveal data-delay="200">
+              <p class="k">UI &amp; interaction design</p>
+              <h3 class="cap-t">Interfaces for bad days</h3>
+              <p>
+                Clear, fast, unambiguous interfaces an operator can run under
+                pressure. We design from wireframe to working screen - then we
+                build it ourselves.
+              </p>
+              <p class="cap-tools"><b>//</b> Design systems · Prototyping</p>
+            </div>
           </div>
         </div>
-      </div>
-    </section>
+      </section>
 
-    <section class="py-16 bg-brand-surface relative overflow-hidden">
-      <div
-        class="absolute top-0 right-0 w-96 h-96 bg-brand-accent/5 rounded-full blur-3xl"
-      ></div>
-      <div
-        class="absolute bottom-0 left-0 w-96 h-96 bg-brand-secondary/5 rounded-full blur-3xl"
-      ></div>
+      <!-- ============================ STUDIO ============================ -->
+      <section class="sec" id="studio" style="padding-top: 0">
+        <div class="wrap">
+          <header class="sec-head" data-reveal>
+            <div>
+              <p class="k k--blue">Studio</p>
+            </div>
+            <p class="k">Independent · Hardware ↔ software</p>
+          </header>
 
-      <div
-        class="container mx-auto px-6 flex flex-col lg:flex-row items-center gap-12"
-      >
-        <div class="lg:w-1/3 reveal-section">
-          <div
-            class="inline-block mb-2 px-2 py-1 bg-brand-accent/10 text-brand-accent text-xs font-bold tracking-widest border border-brand-accent/20 rounded"
-          >
-            INTERACTIVE DEMO
-          </div>
-          <h3 class="text-4xl font-orbitron font-bold mb-6">
-            Live <span class="text-brand-accent">Fleet Command</span>
-          </h3>
-          <p class="text-gray-400 mb-8 text-lg leading-relaxed">
-            Experience our real-time coordinate translation engine. We don't
-            just show maps; we allow you to interact with physical assets in
-            real-time.
+          <p class="studio-big" data-reveal>
+            <em>Measure first.</em> Then build. A small studio's habit that
+            survives contact with production.
           </p>
-
-          <div
-            class="p-4 bg-brand-dark border border-brand-accent/30 rounded-lg relative overflow-hidden group"
-          >
-            <div class="absolute top-0 left-0 w-1 h-full bg-brand-accent"></div>
-            <h4 class="font-bold text-white mb-2 font-orbitron">
-              <i class="fas fa-gamepad mr-2 text-brand-accent"></i>TRY IT OUT
-            </h4>
-            <p class="text-sm text-gray-400">
-              Click anywhere on the map to deploy the
-              <span class="text-brand-accent">Drone Unit</span> to those
-              coordinates.
-            </p>
-          </div>
+          <p class="studio-p" data-reveal data-delay="90">
+            Logixmotion works across the whole stack of a moving product - the
+            sensor, the firmware, the data pipeline and the interface - so
+            nothing gets lost in a hand-off. We like sensors, maps and systems
+            that behave, and we'd rather show you a working prototype than a
+            slide about one.
+          </p>
         </div>
-
-        <div
-          class="lg:w-2/3 w-full h-[500px] relative reveal-section shadow-2xl rounded-xl overflow-hidden border border-brand-accent/20"
-        >
-          <div class="absolute top-4 right-4 z-[500] pointer-events-none">
-            <div
-              class="bg-brand-dark/90 backdrop-blur border-l-2 border-brand-accent p-4 rounded shadow-lg min-w-[200px]"
-            >
-              <div class="text-[10px] text-gray-500 font-orbitron mb-1">
-                TARGET COORDINATES
-              </div>
-              <div
-                id="hud-coords"
-                class="font-mono text-brand-accent text-xs mb-3"
-              >
-                WAITING FOR INPUT...
-              </div>
-
-              <div class="text-[10px] text-gray-500 font-orbitron mb-1">
-                UNIT STATUS
-              </div>
-              <div class="flex items-center gap-2 text-xs text-white">
-                <i
-                  class="fas fa-circle-notch fa-spin text-brand-secondary"
-                  id="unit-icon"
-                ></i>
-                <span id="unit-status">IDLE</span>
-              </div>
+      </section>
+      <!-- ============================ CONTACT ============================ -->
+      <section class="sec contact" id="contact">
+        <div class="wrap">
+          <header class="sec-head" data-reveal>
+            <div>
+              <p class="k k--blue">Contact</p>
             </div>
-          </div>
+            <p class="k">Replies by email</p>
+          </header>
 
-          <div
-            id="demo-map"
-            class="w-full h-full bg-brand-dark"
-            style="cursor: crosshair"
-          ></div>
-        </div>
-      </div>
-    </section>
+          <div class="wrap-grid">
+            <div data-reveal>
+              <h2 class="contact-t">Tell us what moves.</h2>
+              <p class="contact-p">
+                A few lines about the project is plenty - what it is, what it
+                needs to do, and where it currently hurts. We read everything
+                that comes through this form.
+              </p>
+              <a class="maillink" href="mailto:admin@logixmotion.com">admin@logixmotion.com</a>
+            </div>
 
-    <section
-      id="portfolio"
-      class="py-24 bg-brand-dark relative overflow-hidden"
-    >
-      <div
-        class="absolute inset-0 opacity-10"
-        style="
-          background-image: linear-gradient(#333 1px, transparent 1px),
-            linear-gradient(90deg, #333 1px, transparent 1px);
-          background-size: 40px 40px;
-        "
-      ></div>
-
-      <div class="circuit-line" id="portfolio-line"></div>
-
-      <div class="container mx-auto px-6 relative z-10">
-        <div class="text-center mb-24 reveal-section">
-          <h2 class="text-4xl font-orbitron font-bold mb-4">
-            PREVIOUS <span class="text-brand-accent">WORKS</span>
-          </h2>
-          <div class="h-1 w-20 bg-brand-accent mx-auto"></div>
-        </div>
-
-        <div class="space-y-40">
-          <div class="portfolio-item relative group">
-            <div class="circuit-node hidden md:block" style="top: 50%"></div>
-
-            <div
-              class="absolute -inset-1 bg-gradient-to-r from-brand-accent to-blue-600 rounded-2xl blur opacity-20 group-hover:opacity-40 transition duration-500"
-            ></div>
-            <div
-              class="relative bg-brand-surface border border-brand-accent/30 rounded-2xl p-8 md:p-12 overflow-hidden shadow-2xl"
-            >
-              <div
-                class="absolute top-0 left-0 w-16 h-16 border-t-2 border-l-2 border-brand-accent rounded-tl-2xl"
-              ></div>
-              <div
-                class="absolute bottom-0 right-0 w-16 h-16 border-b-2 border-r-2 border-brand-accent rounded-br-2xl"
-              ></div>
-
-              <div class="flex flex-col md:flex-row items-center gap-12">
-                <div class="md:w-1/2 w-full">
-                  <div
-                    class="relative h-80 w-full rounded-lg overflow-hidden border border-white/10 bg-black/50"
-                  >
-                    <canvas
-                      id="airpen-canvas"
-                      class="absolute inset-0 w-full h-full"
-                    ></canvas>
-                    <div
-                      class="absolute bottom-4 left-4 font-mono text-xs text-brand-accent"
-                    >
-                      <i class="fas fa-terminal mr-2"></i>PYTHON_CV_MODULE.py
-                      loaded...
-                    </div>
-                    <div
-                      class="pointer-hand absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 text-4xl text-white/80"
-                    >
-                      <i class="fas fa-hand-pointer animate-pulse"></i>
-                    </div>
-                  </div>
+            <form id="contact-form" data-reveal data-delay="90" novalidate="false">
+              <div class="f-row">
+                <div class="f-field">
+                  <label for="name">Name</label>
+                  <input type="text" id="name" name="name" autocomplete="name" placeholder="Ada Lovelace" required />
                 </div>
-                <div class="md:w-1/2">
-                  <div class="flex items-center gap-4 mb-6">
-                    <span
-                      class="px-3 py-1 text-xs font-bold bg-blue-500/20 text-blue-400 rounded-full border border-blue-500/30"
-                      >PYTHON</span
-                    >
-                    <span
-                      class="px-3 py-1 text-xs font-bold bg-green-500/20 text-green-400 rounded-full border border-green-500/30"
-                      >OPENCV</span
-                    >
-                    <span
-                      class="px-3 py-1 text-xs font-bold bg-orange-500/20 text-orange-400 rounded-full border border-orange-500/30"
-                      >HARDWARE</span
-                    >
-                  </div>
-                  <h3 class="text-3xl font-orbitron font-bold mb-4 text-white">
-                    Smart Pen
-                  </h3>
-                  <p class="text-gray-400 mb-6 leading-relaxed text-lg">
-                    Content
-                  </p>
-                  <button
-                    class="group flex items-center gap-2 text-brand-accent font-bold uppercase tracking-wider text-sm hover:text-white transition-colors"
-                  >
-                    View Schematic
-                    <i
-                      class="fas fa-arrow-right transition-transform group-hover:translate-x-1"
-                    ></i>
-                  </button>
+                <div class="f-field">
+                  <label for="email">Email</label>
+                  <input type="email" id="email" name="email" autocomplete="email" placeholder="ada@example.com" required />
                 </div>
               </div>
-            </div>
-          </div>
-
-          <div class="portfolio-item relative group">
-            <div class="circuit-node hidden md:block" style="top: 50%"></div>
-
-            <div
-              class="absolute -inset-1 bg-gradient-to-r from-purple-600 to-pink-600 rounded-2xl blur opacity-20 group-hover:opacity-40 transition duration-500"
-            ></div>
-            <div
-              class="relative bg-brand-surface border border-purple-500/30 rounded-2xl p-8 md:p-12 overflow-hidden shadow-2xl"
-            >
-              <div
-                class="absolute top-0 left-0 w-16 h-16 border-t-2 border-l-2 border-brand-secondary rounded-tl-2xl"
-              ></div>
-              <div
-                class="absolute bottom-0 right-0 w-16 h-16 border-b-2 border-r-2 border-brand-secondary rounded-br-2xl"
-              ></div>
-
-              <div
-                class="flex flex-col md:flex-row-reverse items-center gap-12"
-              >
-                <div class="md:w-1/2 w-full">
-                  <div
-                    class="relative h-80 w-full bg-slate-900 rounded-lg overflow-hidden border border-white/10 flex flex-col"
-                  >
-                    <div
-                      class="h-8 border-b border-white/5 flex items-center px-4 gap-2 bg-black/20"
-                    >
-                      <div class="w-3 h-3 rounded-full bg-red-500"></div>
-                      <div class="w-3 h-3 rounded-full bg-yellow-500"></div>
-                      <div class="w-3 h-3 rounded-full bg-green-500"></div>
-                    </div>
-                    <div class="flex-1 p-4 grid grid-cols-3 gap-2">
-                      <div
-                        class="col-span-2 bg-brand-dark rounded border border-white/5 relative overflow-hidden"
-                      >
-                        <div
-                          class="absolute w-2 h-2 bg-brand-accent rounded-full top-1/4 left-1/4 animate-ping"
-                        ></div>
-                        <div
-                          class="absolute w-2 h-2 bg-brand-accent rounded-full top-1/4 left-1/4"
-                        ></div>
-                        <div
-                          class="absolute w-2 h-2 bg-purple-500 rounded-full bottom-1/3 right-1/3 animate-ping"
-                          style="animation-delay: 0.5s"
-                        ></div>
-                        <div
-                          class="absolute w-2 h-2 bg-purple-500 rounded-full bottom-1/3 right-1/3"
-                        ></div>
-                        <div
-                          class="absolute inset-0"
-                          style="
-                            background-image: radial-gradient(
-                              #333 1px,
-                              transparent 1px
-                            );
-                            background-size: 20px 20px;
-                            opacity: 0.3;
-                          "
-                        ></div>
-                      </div>
-                      <div class="col-span-1 flex flex-col gap-2">
-                        <div
-                          class="h-1/3 bg-brand-dark rounded border border-white/5 p-2 animate-pulse"
-                        ></div>
-                        <div
-                          class="h-1/3 bg-brand-dark rounded border border-white/5 p-2"
-                        ></div>
-                        <div
-                          class="h-1/3 bg-brand-dark rounded border border-white/5 p-2"
-                        ></div>
-                      </div>
-                    </div>
-                  </div>
-                </div>
-                <div class="md:w-1/2">
-                  <div class="flex items-center gap-4 mb-6">
-                    <span
-                      class="px-3 py-1 text-xs font-bold bg-brand-accent/20 text-brand-accent rounded-full border border-brand-accent/30"
-                      >MAPLIBRE</span
-                    >
-                    <span
-                      class="px-3 py-1 text-xs font-bold bg-purple-500/20 text-purple-400 rounded-full border border-purple-500/30"
-                      >IOT</span
-                    >
-                  </div>
-                  <h3 class="text-3xl font-orbitron font-bold mb-4 text-white">
-                    Project
-                  </h3>
-                  <p class="text-gray-400 mb-6 leading-relaxed text-lg">
-                    Content
-                  </p>
-                  <button
-                    class="group flex items-center gap-2 text-brand-secondary font-bold uppercase tracking-wider text-sm hover:text-white transition-colors"
-                  >
-                    View Dashboard
-                    <i
-                      class="fas fa-arrow-right transition-transform group-hover:translate-x-1"
-                    ></i>
-                  </button>
-                </div>
+              <div class="f-field">
+                <label for="message">Project details</label>
+                <textarea id="message" name="message" rows="5" placeholder="What are you building, and what should it do?" required></textarea>
               </div>
-            </div>
+              <div class="f-actions">
+                <button type="submit" class="btn btn--primary" id="form-btn">Send message</button>
+                <p class="f-status" id="form-status" role="status" aria-live="polite"></p>
+              </div>
+            </form>
           </div>
         </div>
-      </div>
-    </section>
+      </section>
 
-    <section
-      id="tech"
-      class="py-12 border-t border-b border-white/5 bg-brand-surface/50 overflow-hidden"
-    >
-      <div class="flex whitespace-nowrap" id="tech-ticker"></div>
-    </section>
-
-    <section id="contact" class="py-24 relative overflow-hidden">
-      <div
-        class="absolute right-0 bottom-0 w-1/2 h-full bg-gradient-to-l from-brand-secondary/10 to-transparent skew-x-12 transform origin-bottom-right"
-      ></div>
-
-      <div class="container mx-auto px-6 relative z-10">
-        <div
-          class="max-w-4xl mx-auto bg-brand-surface border border-white/10 rounded-2xl p-8 md:p-12 shadow-2xl reveal-section"
-        >
-          <div class="text-center mb-10">
-            <h2 class="text-3xl font-orbitron font-bold mb-2">
-              INITIATE <span class="text-brand-accent">CONTACT</span>
-            </h2>
-            <p class="text-gray-400">
-              Have a project in mind? Let's calibrate your vision.
-            </p>
-            <div class="mt-4">
-              <a
-                href="mailto:admin@logixmotion.com"
-                class="text-brand-accent hover:text-white transition-colors font-orbitron tracking-wider text-lg"
-              >
-                <i class="fas fa-envelope mr-2"></i> admin@logixmotion.com
+      <!-- ============================ FOOTER ============================ -->
+      <footer class="footer">
+        <div class="wrap">
+          <div class="footer-grid">
+            <div>
+              <a href="#top" class="brand">
+                <span class="brand-mark" aria-hidden="true"></span>
+                LOGIXMOTION
               </a>
+              <p class="footer-note">
+                Software &amp; hardware engineering studio. Sensors, maps and
+                systems that behave.
+              </p>
+            </div>
+
+            <div>
+              <span class="k">Site</span>
+              <ul>
+                <li><a href="#work">Work</a></li>
+                <li><a href="#capabilities">Capabilities</a></li>
+                <li><a href="#studio">Studio</a></li>
+                <li><a href="#contact">Contact</a></li>
+              </ul>
+            </div>
+
+            <div>
+              <span class="k">Elsewhere</span>
+              <ul>
+                <li><a href="mailto:admin@logixmotion.com">Email</a></li>
+                <li>
+                  <a
+                    href="https://www.linkedin.com/company/logixmotion"
+                    target="_blank"
+                    rel="noopener noreferrer"
+                  >
+                    LinkedIn
+                    <span class="ext-arrow" aria-hidden="true">↗</span>
+                    <span class="sr-only">(opens in a new tab)</span>
+                  </a>
+                </li>
+                <li>
+                  <a
+                    href="https://github.com/logixmotion"
+                    target="_blank"
+                    rel="noopener noreferrer"
+                  >
+                    GitHub
+                    <span class="ext-arrow" aria-hidden="true">↗</span>
+                    <span class="sr-only">(opens in a new tab)</span>
+                  </a>
+                </li>
+              </ul>
+            </div>
+
+            <div>
+              <span class="k">Legal</span>
+              <ul>
+                <li><a href="#">Imprint</a></li>
+                <li><a href="#">Privacy</a></li>
+              </ul>
             </div>
           </div>
 
-          <form
-            class="space-y-6"
-            id="contact-form"
-            onsubmit="submitForm(event)"
-          >
-            <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
-              <div class="relative">
-                <input
-                  type="text"
-                  id="name"
-                  class="w-full bg-brand-dark border border-gray-700 rounded p-4 text-white focus:border-brand-accent focus:outline-none transition-colors peer"
-                  placeholder=" "
-                  required
-                />
-                <label
-                  for="name"
-                  class="absolute left-4 top-4 text-gray-500 transition-all peer-focus:-top-3 peer-focus:left-2 peer-focus:bg-brand-surface peer-focus:text-brand-accent peer-focus:text-xs peer-placeholder-shown:top-4 pointer-events-none"
-                  >Name</label
-                >
-              </div>
-              <div class="relative">
-                <input
-                  type="email"
-                  id="email"
-                  class="w-full bg-brand-dark border border-gray-700 rounded p-4 text-white focus:border-brand-accent focus:outline-none transition-colors peer"
-                  placeholder=" "
-                  required
-                />
-                <label
-                  for="email"
-                  class="absolute left-4 top-4 text-gray-500 transition-all peer-focus:-top-3 peer-focus:left-2 peer-focus:bg-brand-surface peer-focus:text-brand-accent peer-focus:text-xs peer-placeholder-shown:top-4 pointer-events-none"
-                  >Email</label
-                >
-              </div>
-            </div>
-            <div class="relative">
-              <textarea
-                id="message"
-                rows="4"
-                class="w-full bg-brand-dark border border-gray-700 rounded p-4 text-white focus:border-brand-accent focus:outline-none transition-colors peer"
-                placeholder=" "
-                required
-              ></textarea>
-              <label
-                for="message"
-                class="absolute left-4 top-4 text-gray-500 transition-all peer-focus:-top-3 peer-focus:left-2 peer-focus:bg-brand-surface peer-focus:text-brand-accent peer-focus:text-xs peer-placeholder-shown:top-4 pointer-events-none"
-                >Project Details</label
-              >
-            </div>
-            <button
-              type="submit"
-              class="w-full py-4 bg-brand-secondary hover:bg-brand-accent hover:text-brand-dark text-white font-bold rounded transition-all duration-300 shadow-[0_0_20px_rgba(112,0,255,0.4)] hover:shadow-[0_0_30px_rgba(0,240,255,0.6)] font-orbitron tracking-wider"
-            >
-              TRANSMIT DATA
-            </button>
-          </form>
+          <div class="footer-bottom">
+            <span>© <span id="yr">2026</span> Logixmotion. All rights reserved.</span>
+            <span class="k">Motion · Measured · Built</span>
+          </div>
         </div>
-      </div>
-    </section>
-
-    <footer class="bg-black py-12 border-t border-white/10">
-      <div
-        class="container mx-auto px-6 flex flex-col md:flex-row justify-between items-center"
-      >
-        <div class="mb-6 md:mb-0">
-          <a
-            href="#"
-            class="text-2xl font-orbitron font-bold text-white tracking-wider"
-          >
-            LOGIX<span class="text-brand-accent">MOTION</span>
-          </a>
-          <p class="text-gray-500 text-sm mt-2">
-            &copy; 2025 Logixmotion Inc. All Systems Operational.
-          </p>
-          <a href="mailto:admin@logixmotion.com" class="block text-gray-500 text-sm mt-1 hover:text-brand-accent transition-colors">
-            admin@logixmotion.com
-          </a>
-        </div>
-        <div class="flex space-x-6">
-          <a href="#" class="text-gray-400 hover:text-white transition-colors"
-            ><i class="fab fa-linkedin text-xl"></i
-          ></a>
-          <a href="#" class="text-gray-400 hover:text-white transition-colors"
-            ><i class="fab fa-github text-xl"></i
-          ></a>
-          <a href="#" class="text-gray-400 hover:text-white transition-colors"
-            ><i class="fab fa-twitter text-xl"></i
-          ></a>
-        </div>
-      </div>
-    </footer>
-
-    <div
-      id="modal"
-      class="fixed inset-0 z-50 flex items-center justify-center pointer-events-none opacity-0 transition-opacity duration-300"
-    >
-      <div class="absolute inset-0 bg-black/80 backdrop-blur-sm"></div>
-      <div
-        class="bg-brand-surface border border-brand-accent p-8 rounded-xl relative z-10 max-w-sm text-center transform scale-90 transition-transform duration-300"
-        id="modal-content"
-      >
-        <div
-          class="w-16 h-16 bg-brand-accent/20 rounded-full flex items-center justify-center mx-auto mb-4"
-        >
-          <i class="fas fa-check text-3xl text-brand-accent"></i>
-        </div>
-        <h3 class="text-2xl font-orbitron text-white mb-2">Message Received</h3>
-        <p class="text-gray-400 mb-6">
-          Thank you. Our team will analyze your request and respond shortly.
-        </p>
-        <button
-          onclick="hideModal()"
-          class="px-6 py-2 bg-brand-accent text-brand-dark font-bold rounded hover:bg-white transition-colors"
-        >
-          CLOSE
-        </button>
-      </div>
-    </div>
+      </footer>
+    </main>
 
     <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
 
     <script>
-      /* --- 1. Loader Logic --- */
-      window.addEventListener("load", () => {
-        const bar = document.getElementById("progress-bar");
-        bar.style.width = "100%";
+      /* ==========================================================
+         Logixmotion - front-end behaviour
+         anime.js drives: hero timeline, word stagger, SVG line
+         drawing, motion-path orbit, scroll reveals, ticker loop.
+         ========================================================== */
+      (function () {
+        "use strict";
 
-        setTimeout(() => {
-          document.getElementById("loader").style.opacity = "0";
-          setTimeout(() => {
-            document.getElementById("loader").style.display = "none";
-            initAnimations(); // Start other animations
-          }, 500);
-        }, 800);
-      });
+        var REDUCED =
+          window.matchMedia &&
+          matchMedia("(prefers-reduced-motion: reduce)").matches;
+        var HAS_ANIME = typeof anime !== "undefined";
+        var MOTION = !REDUCED && HAS_ANIME;
 
-      /* --- 2. Typing Effect (Reverted Phrases) --- */
-      const textElement = document.getElementById("typing-text");
-      const phrases = ["FUTURE.", "INTELLIGENCE.", "HARDWARE.", "SOFTWARE."];
-      let phraseIndex = 0;
-      let charIndex = 0;
-      let isDeleting = false;
-
-      function typeEffect() {
-        const currentPhrase = phrases[phraseIndex];
-
-        if (isDeleting) {
-          textElement.textContent = currentPhrase.substring(0, charIndex - 1);
-          charIndex--;
-        } else {
-          textElement.textContent = currentPhrase.substring(0, charIndex + 1);
-          charIndex++;
+        // If anime failed to load, unhide everything that CSS pre-hid.
+        if (!MOTION) {
+          document.documentElement.classList.remove("anim");
+          document.documentElement.classList.add("no-anim");
         }
 
-        let typeSpeed = isDeleting ? 100 : 200;
-
-        if (!isDeleting && charIndex === currentPhrase.length) {
-          typeSpeed = 2000; // Pause at end
-          isDeleting = true;
-        } else if (isDeleting && charIndex === 0) {
-          isDeleting = false;
-          phraseIndex = (phraseIndex + 1) % phrases.length;
-          typeSpeed = 500;
+        function $(s, c) {
+          return (c || document).querySelector(s);
+        }
+        function $all(s, c) {
+          return Array.prototype.slice.call((c || document).querySelectorAll(s));
+        }
+        function clamp(v, lo, hi) {
+          return Math.max(lo, Math.min(hi, v));
         }
 
-        setTimeout(typeEffect, typeSpeed);
-      }
-
-      /* --- 3. Hero Canvas Animation (Network/Circuit Nodes) --- */
-      const canvas = document.getElementById("canvas-container");
-      const ctx = canvas.getContext("2d");
-      let width, height;
-      let particles = [];
-
-      function resizeCanvas() {
-        width = window.innerWidth;
-        height = window.innerHeight;
-        canvas.width = width;
-        canvas.height = height;
-      }
-
-      class Particle {
-        constructor() {
-          this.x = Math.random() * width;
-          this.y = Math.random() * height;
-          this.vx = (Math.random() - 0.5) * 0.5; // Slow movement
-          this.vy = (Math.random() - 0.5) * 0.5;
-          this.size = Math.random() * 2 + 1;
-          this.color = Math.random() > 0.5 ? "#00F0FF" : "#7000FF"; // Brand colors
+        /* ---------- nav ---------- */
+        var navbar = $("#navbar");
+        function onScroll() {
+          navbar.classList.toggle("scrolled", window.scrollY > 8);
         }
-        update() {
-          this.x += this.vx;
-          this.y += this.vy;
-          if (this.x < 0 || this.x > width) this.vx *= -1;
-          if (this.y < 0 || this.y > height) this.vy *= -1;
+        window.addEventListener("scroll", onScroll, { passive: true });
+        onScroll();
+
+        var mbtn = $("#mbtn");
+        var mnav = $("#mnav");
+        function closeMenu() {
+          mnav.classList.remove("open");
+          mbtn.setAttribute("aria-expanded", "false");
         }
-        draw() {
-          ctx.beginPath();
-          ctx.arc(this.x, this.y, this.size, 0, Math.PI * 2);
-          ctx.fillStyle = this.color;
-          ctx.fill();
+        mbtn.addEventListener("click", function () {
+          var open = mnav.classList.toggle("open");
+          mbtn.setAttribute("aria-expanded", open ? "true" : "false");
+          if (open && MOTION) {
+            anime({
+              targets: ".mnav a",
+              opacity: [0, 1],
+              translateY: [-8, 0],
+              duration: 380,
+              delay: anime.stagger(45),
+              easing: "easeOutQuad",
+            });
+          }
+        });
+        $all(".mnav a").forEach(function (a) {
+          a.addEventListener("click", closeMenu);
+        });
+
+        /* ---------- footer year ---------- */
+        $("#yr").textContent = new Date().getFullYear();
+
+        /* ---------- ticker (anime: linear loop) ---------- */
+        (function ticker() {
+          var stack = [
+            "Python", "C++", "Node.js", "React", "Vue", "Angular",
+            "Leaflet", "MapLibre", "Arduino", "Raspberry Pi",
+            "OpenCV", "TensorFlow", "Docker", "AWS",
+          ];
+          var row = $("#tick-row");
+          var html = stack
+            .map(function (t) {
+              return "<span>" + t + "</span>";
+            })
+            .join("");
+          row.innerHTML = html + html; // two exact copies → loop at -50%
+          if (MOTION) {
+            anime({
+              targets: row,
+              translateX: ["0%", "-50%"],
+              duration: 26000,
+              easing: "linear",
+              loop: true,
+            });
+          }
+        })();
+
+        /* ---------- scroll reveals (IO → anime) ---------- */
+        (function reveals() {
+          var items = $all("[data-reveal]");
+          if (!MOTION || !("IntersectionObserver" in window)) return;
+          var io = new IntersectionObserver(
+            function (entries) {
+              entries.forEach(function (en) {
+                if (!en.isIntersecting) return;
+                io.unobserve(en.target);
+                anime({
+                  targets: en.target,
+                  opacity: [0, 1],
+                  translateY: [26, 0],
+                  duration: 820,
+                  delay: parseInt(en.target.getAttribute("data-delay") || 0, 10),
+                  easing: "easeOutCubic",
+                });
+              });
+            },
+            { threshold: 0.16, rootMargin: "0px 0px -60px 0px" }
+          );
+          items.forEach(function (el) {
+            io.observe(el);
+          });
+        })();
+
+        /* ==========================================================
+           HERO INSTRUMENT - a gimbal that reads your cursor.
+           Tick marks generated, rings drawn in with anime
+           (strokeDashoffset), satellite on an anime motion path,
+           rotation integrated from pointer velocity in rAF.
+           ========================================================== */
+        (function gyro() {
+          var svg = $("#gyro");
+          if (!svg) return;
+
+          // tick marks: 36 around the bezel, cardinals in cobalt
+          var ticks = $("#gyro-ticks");
+          var NS = "http://www.w3.org/2000/svg";
+          for (var i = 0; i < 36; i++) {
+            var a = (i * 10 * Math.PI) / 180;
+            var cardinal = i % 9 === 0;
+            var r1 = 148,
+              r2 = cardinal ? 160 : 155;
+            var ln = document.createElementNS(NS, "line");
+            ln.setAttribute("x1", 180 + r1 * Math.cos(a));
+            ln.setAttribute("y1", 180 + r1 * Math.sin(a));
+            ln.setAttribute("x2", 180 + r2 * Math.cos(a));
+            ln.setAttribute("y2", 180 + r2 * Math.sin(a));
+            ln.setAttribute("stroke", cardinal ? "#0D2FC4" : "#16181B");
+            ln.setAttribute("stroke-width", cardinal ? "1.6" : "1");
+            ln.setAttribute("opacity", cardinal ? "1" : "0.45");
+            ticks.appendChild(ln);
+          }
+
+          var ringA = $("#ringA"),
+            ringB = $("#ringB"),
+            ringC = $("#ringC");
+          var outWX = $("#r-wx"),
+            outWY = $("#r-wy"),
+            outTH = $("#r-th"),
+            outSRC = $("#r-src");
+
+          if (!MOTION) {
+            $("#inst-caption").textContent = "Static preview";
+            var pt = $("#orbit-track").getPointAtLength(0);
+            $("#orbit-dot").style.transform =
+              "translate(" + pt.x + "px," + pt.y + "px)";
+            return;
+          }
+
+          // satellite dot rides the gimbal track - anime motion path
+          var track = anime.path("#orbit-track");
+          anime({
+            targets: "#orbit-dot",
+            translateX: track("x"),
+            translateY: track("y"),
+            duration: 9000,
+            easing: "linear",
+            loop: true,
+          });
+
+          // pointer velocity → ring rotation
+          var vel = { x: 0, y: 0 };
+          var last = null;
+          var lastInput = 0;
+          window.addEventListener(
+            "pointermove",
+            function (e) {
+              var now = performance.now();
+              if (last) {
+                var dt = Math.max(now - last.t, 1);
+                vel.x = vel.x * 0.75 + ((e.clientX - last.x) / dt) * 0.25;
+                vel.y = vel.y * 0.75 + ((e.clientY - last.y) / dt) * 0.25;
+              }
+              last = { x: e.clientX, y: e.clientY, t: now };
+              lastInput = now;
+            },
+            { passive: true }
+          );
+
+          var angA = 0,
+            angB = 0,
+            angC = -18;
+          var f = 0;
+          function fmt(v, pad) {
+            var s = Math.abs(v).toFixed(1);
+            while (s.length < pad) s = "0" + s;
+            return (v < 0 ? "−" : "+") + s;
+          }
+          function frame() {
+            vel.x *= 0.93;
+            vel.y *= 0.93;
+            var gx = clamp(vel.x, -2.2, 2.2);
+            var gy = clamp(vel.y, -2.2, 2.2);
+
+            angA += 0.05;
+            angB += 0.16 + gx * 4.6;
+            angC -= 0.12 + gy * 4.6;
+
+            ringA.style.transform = "rotate(" + angA + "deg)";
+            ringB.style.transform = "rotate(" + angB + "deg)";
+            ringC.style.transform = "rotate(" + angC + "deg)";
+
+            if (++f % 6 === 0) {
+              outWX.textContent = fmt(gx * 276, 5) + "°/s";
+              outWY.textContent = fmt(gy * 276, 5) + "°/s";
+              var th = ((angB % 360) + 360) % 360;
+              outTH.textContent = th.toFixed(1).padStart(5, "0") + "°";
+              outSRC.textContent =
+                performance.now() - lastInput < 1400 && last ? "cursor" : "idle";
+            }
+            requestAnimationFrame(frame);
+          }
+          requestAnimationFrame(frame);
+        })();
+
+        /* ---------- hero entrance (anime timeline + staggers) ---------- */
+        if (MOTION) {
+          anime
+            .timeline({ easing: "easeOutExpo" })
+            .add({
+              targets: ".hw > span",
+              translateY: ["112%", "0%"],
+              duration: 950,
+              delay: anime.stagger(65),
+            })
+            .add(
+              {
+                targets: "[data-hero]",
+                opacity: [0, 1],
+                translateY: [14, 0],
+                duration: 750,
+                delay: anime.stagger(95),
+              },
+              "-=560"
+            )
+            .add(
+              {
+                targets: ".gyro-geo",
+                strokeDashoffset: [anime.setDashoffset, 0],
+                duration: 1150,
+                easing: "easeInOutSine",
+                delay: anime.stagger(130),
+              },
+              "-=650"
+            );
         }
-      }
 
-      function initCanvas() {
-        particles = [];
-        for (let i = 0; i < 60; i++) {
-          // Number of nodes
-          particles.push(new Particle());
-        }
-      }
+        /* ==========================================================
+           PEN EXHIBIT - stroke drawn with anime strokeDashoffset,
+           sample points pop in along the path as it draws.
+           ========================================================== */
+        (function pen() {
+          var path = $("#pen-path");
+          var dotsG = $("#pen-dots");
+          var replay = $("#pen-replay");
+          if (!path) return;
 
-      function animateCanvas() {
-        ctx.clearRect(0, 0, width, height);
+          var NS = "http://www.w3.org/2000/svg";
+          var FR = [0.05, 0.16, 0.28, 0.4, 0.52, 0.64, 0.77, 0.9];
+          var total = path.getTotalLength();
+          var dots = FR.map(function (fr) {
+            var p = path.getPointAtLength(total * fr);
+            var c = document.createElementNS(NS, "circle");
+            c.setAttribute("cx", p.x);
+            c.setAttribute("cy", p.y);
+            c.setAttribute("r", MOTION ? 0 : 3.4);
+            c.setAttribute("fill", "#0D2FC4");
+            dotsG.appendChild(c);
+            return c;
+          });
 
-        // Draw connections
-        for (let i = 0; i < particles.length; i++) {
-          particles[i].update();
-          particles[i].draw();
+          if (!MOTION) {
+            replay.style.display = "none";
+            return;
+          }
 
-          for (let j = i; j < particles.length; j++) {
-            const dx = particles[i].x - particles[j].x;
-            const dy = particles[i].y - particles[j].y;
-            const distance = Math.sqrt(dx * dx + dy * dy);
+          var DRAW = 1700;
+          var playing = false;
+          function play() {
+            if (playing) return;
+            playing = true;
+            anime.set(path, { strokeDashoffset: anime.setDashoffset });
+            dots.forEach(function (c) {
+              c.setAttribute("r", 0);
+            });
+            anime({
+              targets: path,
+              strokeDashoffset: [anime.setDashoffset, 0],
+              duration: DRAW,
+              easing: "easeInOutSine",
+            });
+            anime({
+              targets: dots,
+              r: [0, 3.4],
+              duration: 320,
+              easing: "easeOutBack",
+              delay: function (el, i) {
+                return FR[i] * (DRAW - 260) + 120;
+              },
+              complete: function () {
+                playing = false;
+              },
+            });
+          }
 
-            if (distance < 150) {
-              ctx.beginPath();
-              ctx.strokeStyle = `rgba(100, 100, 255, ${1 - distance / 150})`;
-              ctx.lineWidth = 0.5;
-              ctx.moveTo(particles[i].x, particles[i].y);
-              ctx.lineTo(particles[j].x, particles[j].y);
-              ctx.stroke();
+          // arm: hide stroke until it scrolls into view, then draw once
+          anime.set(path, { strokeDashoffset: anime.setDashoffset });
+          var io = new IntersectionObserver(
+            function (entries) {
+              entries.forEach(function (en) {
+                if (en.isIntersecting) {
+                  io.disconnect();
+                  setTimeout(play, 250);
+                }
+              });
+            },
+            { threshold: 0.4 }
+          );
+          io.observe(path);
+
+          replay.addEventListener("click", play);
+        })();
+
+        /* ==========================================================
+           TRACKING DEMO - Leaflet, lazily initialised.
+           Click to dispatch; the unit computes heading and travels.
+           ========================================================== */
+        (function trackingDemo() {
+          var mapEl = $("#demo-map");
+          if (!mapEl || typeof L === "undefined") return;
+
+          var started = false;
+          function start() {
+            if (started) return;
+            started = true;
+
+            var map = L.map("demo-map", {
+              zoomControl: false,
+              scrollWheelZoom: false,
+              dragging: true,
+            }).setView([8.5241, 76.9366], 15);
+            map.attributionControl.setPrefix(false);
+
+            L.tileLayer(
+              "https://{s}.basemaps.cartocdn.com/light_all/{z}/{x}/{y}{r}.png",
+              {
+                maxZoom: 19,
+                attribution: "© OpenStreetMap · © CARTO",
+              }
+            ).addTo(map);
+
+            var unitIcon = L.divIcon({
+              className: "unit-icon",
+              html: '<div class="unit"></div>',
+              iconSize: [22, 22],
+              iconAnchor: [11, 11],
+            });
+
+            var current = [8.5241, 76.9366];
+            var unit = L.marker(current, { icon: unitIcon }).addTo(map);
+            var target = null;
+            var targetMarker = null;
+            var rafId = null;
+
+            var elCoords = $("#hud-coords");
+            var elHdg = $("#hud-hdg");
+            var elStatus = $("#hud-status");
+
+            map.on("click", function (e) {
+              target = [e.latlng.lat, e.latlng.lng];
+              elCoords.textContent =
+                e.latlng.lat.toFixed(4) + ", " + e.latlng.lng.toFixed(4);
+              elStatus.textContent = "En route";
+              elStatus.className = "hud-v go";
+
+              if (targetMarker) map.removeLayer(targetMarker);
+              targetMarker = L.marker(e.latlng, {
+                icon: L.divIcon({
+                  className: "ping-marker",
+                  iconSize: [20, 20],
+                  iconAnchor: [10, 10],
+                }),
+              }).addTo(map);
+
+              if (rafId) cancelAnimationFrame(rafId);
+              step();
+            });
+
+            function step() {
+              if (!target) return;
+              var dLat = target[0] - current[0];
+              var dLng = target[1] - current[1];
+
+              current = [current[0] + dLat * 0.055, current[1] + dLng * 0.055];
+              unit.setLatLng(current);
+
+              var ang = (Math.atan2(dLng, dLat) * 180) / Math.PI;
+              var el = unit.getElement();
+              var body = el && el.querySelector(".unit");
+              if (body) body.style.transform = "rotate(" + ang + "deg)";
+              elHdg.textContent = (((ang % 360) + 360) % 360).toFixed(0) + "°";
+
+              if (Math.abs(dLat) < 0.0001 && Math.abs(dLng) < 0.0001) {
+                elStatus.textContent = "On station";
+                elStatus.className = "hud-v ok";
+                rafId = null;
+              } else {
+                rafId = requestAnimationFrame(step);
+              }
             }
           }
-        }
-        requestAnimationFrame(animateCanvas);
-      }
 
-      /* --- 4. Air Pen Canvas (Simulated Drawing) --- */
-      const airCanvas = document.getElementById("airpen-canvas");
-      const airCtx = airCanvas.getContext("2d");
-      let airTime = 0;
+          if ("IntersectionObserver" in window) {
+            var io = new IntersectionObserver(
+              function (entries) {
+                entries.forEach(function (en) {
+                  if (en.isIntersecting) {
+                    io.disconnect();
+                    start();
+                  }
+                });
+              },
+              { rootMargin: "300px" }
+            );
+            io.observe(mapEl);
+          } else {
+            start();
+          }
+        })();
 
-      function resizeAirCanvas() {
-        if (airCanvas.parentElement) {
-          airCanvas.width = airCanvas.parentElement.offsetWidth;
-          airCanvas.height = airCanvas.parentElement.offsetHeight;
-        }
-      }
+        /* ==========================================================
+           CONTACT FORM - same /send-email contract as before.
+           ========================================================== */
+        (function contactForm() {
+          var form = $("#contact-form");
+          var btn = $("#form-btn");
+          var status = $("#form-status");
+          if (!form) return;
 
-      function animateAirPen() {
-        if (!airCanvas.width) resizeAirCanvas();
+          form.addEventListener("submit", function (event) {
+            event.preventDefault();
 
-        // Clear with trail effect
-        airCtx.fillStyle = "rgba(0, 0, 0, 0.1)";
-        airCtx.fillRect(0, 0, airCanvas.width, airCanvas.height);
+            var payload = {
+              name: $("#name").value,
+              email: $("#email").value,
+              message: $("#message").value,
+            };
 
-        airTime += 0.05;
+            btn.disabled = true;
+            btn.textContent = "Sending…";
+            status.textContent = "";
+            status.className = "f-status";
 
-        // Figure 8 pattern
-        const cx = airCanvas.width / 2;
-        const cy = airCanvas.height / 2;
-        const px = cx + Math.sin(airTime) * 100;
-        const py = cy + Math.sin(airTime * 2) * 50;
-
-        airCtx.beginPath();
-        airCtx.arc(px, py, 3, 0, Math.PI * 2);
-        airCtx.fillStyle = "#00F0FF";
-        airCtx.fill();
-
-        // Draw line connecting logic (simulating vector tracking)
-        if (airTime % 1 < 0.1) {
-          airCtx.strokeStyle = "rgba(0, 240, 255, 0.5)";
-          airCtx.beginPath();
-          airCtx.moveTo(cx, cy);
-          airCtx.lineTo(px, py);
-          airCtx.stroke();
-        }
-
-        requestAnimationFrame(animateAirPen);
-      }
-
-      /* --- 5. Scroll Intersection Observer with Anime.js --- */
-      function setupScrollReveal() {
-        const observer = new IntersectionObserver(
-          (entries) => {
-            entries.forEach((entry) => {
-              if (entry.isIntersecting) {
-                // Default fade up
-                if (entry.target.classList.contains("reveal-section")) {
-                  entry.target.classList.add("active");
+            fetch("/send-email", {
+              method: "POST",
+              headers: { "Content-Type": "application/json" },
+              body: JSON.stringify(payload),
+            })
+              .then(function (r) {
+                return r.json();
+              })
+              .then(function (result) {
+                if (result.success) {
+                  status.textContent = "Message sent - we'll reply by email.";
+                  status.className = "f-status ok";
+                  form.reset();
+                } else {
+                  status.textContent =
+                    result.message || "Something went wrong. Please try again.";
+                  status.className = "f-status err";
                 }
-
-                // Special Anime.js handling for Portfolio Items
-                if (entry.target.classList.contains("portfolio-item")) {
+              })
+              .catch(function () {
+                status.textContent =
+                  "Network error - please try again, or email us directly.";
+                status.className = "f-status err";
+              })
+              .finally(function () {
+                btn.disabled = false;
+                btn.textContent = "Send message";
+                if (MOTION) {
                   anime({
-                    targets: entry.target,
+                    targets: status,
                     opacity: [0, 1],
-                    translateY: [100, 0],
-                    scale: [0.95, 1],
-                    duration: 1200,
-                    easing: "spring(1, 80, 10, 0)",
+                    translateY: [6, 0],
+                    duration: 420,
+                    easing: "easeOutQuad",
                   });
                 }
-              }
-            });
-          },
-          { threshold: 0.15, rootMargin: "0px 0px -100px 0px" }
-        );
-
-        document
-          .querySelectorAll(".reveal-section")
-          .forEach((el) => observer.observe(el));
-
-        // Observe portfolio items specifically
-        document
-          .querySelectorAll(".portfolio-item")
-          .forEach((el) => observer.observe(el));
-      }
-
-      /* --- 6. Interactive Map Demo (CLEAN VERSION) --- */
-      function initMap() {
-        // 1. Initialize Map
-        const map = L.map("demo-map", {
-          zoomControl: false,
-          attributionControl: false,
-          scrollWheelZoom: false,
-          dragging: true,
-        }).setView([8.5241, 76.9366], 15);
-
-        // 2. Dark Sci-Fi Tiles
-        L.tileLayer(
-          "https://{s}.basemaps.cartocdn.com/dark_all/{z}/{x}/{y}{r}.png",
-          {
-            maxZoom: 19,
-          }
-        ).addTo(map);
-
-        // 3. Create the Drone Icon
-        const droneIcon = L.divIcon({
-          className: "drone-icon",
-          html: `<div class="drone-body" style="border-bottom-color: #00F0FF; filter: drop-shadow(0 0 10px #00F0FF);"></div>`,
-          iconSize: [30, 30],
-          iconAnchor: [15, 15],
-        });
-
-        // 4. Initial Drone Position
-        let currentPos = [8.5241, 76.9366];
-        const droneMarker = L.marker(currentPos, { icon: droneIcon }).addTo(
-          map
-        );
-
-        // Target Marker (The visual "Click" ripple)
-        let targetMarker = null;
-
-        // HUD Elements
-        const coordsDisplay = document.getElementById("hud-coords");
-        const statusDisplay = document.getElementById("unit-status");
-        const unitIcon = document.getElementById("unit-icon");
-
-        // 5. ANIMATION LOGIC
-        let targetPos = null;
-        let animationFrameId;
-
-        // Click Interaction
-        map.on("click", function (e) {
-          const dest = e.latlng;
-          targetPos = [dest.lat, dest.lng];
-
-          // Update HUD
-          coordsDisplay.innerText = `${dest.lat.toFixed(4)}, ${dest.lng.toFixed(
-            4
-          )}`;
-          statusDisplay.innerText = "DEPLOYING...";
-          statusDisplay.className = "text-brand-accent animate-pulse";
-          unitIcon.className = "fas fa-paper-plane text-brand-accent";
-
-          // Visual "Ping" at click location
-          if (targetMarker) map.removeLayer(targetMarker);
-
-          const pingIcon = L.divIcon({
-            className: "ping-marker",
-            iconSize: [20, 20],
-            iconAnchor: [10, 10],
+              });
           });
-          targetMarker = L.marker(dest, { icon: pingIcon }).addTo(map);
-
-          // Start Flying
-          animateMovement();
-        });
-
-        function animateMovement() {
-          if (!targetPos) return;
-
-          // Simple Lerp (Linear Interpolation) for smooth movement
-          const latDiff = targetPos[0] - currentPos[0];
-          const lngDiff = targetPos[1] - currentPos[1];
-
-          // Move 5% of the distance per frame (Ease-out effect)
-          const newLat = currentPos[0] + latDiff * 0.05;
-          const newLng = currentPos[1] + lngDiff * 0.05;
-
-          // Rotation Math
-          const angle = Math.atan2(lngDiff, latDiff) * (180 / Math.PI);
-          const iconElement = droneMarker
-            .getElement()
-            ?.querySelector(".drone-body");
-          if (iconElement) {
-            iconElement.style.transform = `rotate(${angle}deg)`;
-          }
-
-          // Update Position
-          currentPos = [newLat, newLng];
-          droneMarker.setLatLng(currentPos);
-
-          // Check if arrived (very close)
-          if (Math.abs(latDiff) < 0.0001 && Math.abs(lngDiff) < 0.0001) {
-            statusDisplay.innerText = "ON STATION";
-            statusDisplay.className = "text-green-400";
-            unitIcon.className = "fas fa-check-circle text-green-400";
-            cancelAnimationFrame(animationFrameId);
-          } else {
-            animationFrameId = requestAnimationFrame(animateMovement);
-          }
-        }
-      }
-
-      /* --- 7. Tech Ticker --- */
-      function initTicker() {
-        const tech = [
-          "Python",
-          "C++",
-          "React",
-          "Angular",
-          "Vue",
-          "Leaflet",
-          "MapLibre",
-          "Arduino",
-          "Raspberry Pi",
-          "OpenCV",
-          "TensorFlow",
-          "Node.js",
-          "Docker",
-          "AWS",
-        ];
-        const container = document.getElementById("tech-ticker");
-
-        // Duplicate content for infinite scroll
-        const content = tech
-          .map(
-            (t) =>
-              `<span class="mx-8 text-gray-500 font-orbitron hover:text-brand-accent transition-colors cursor-default">${t}</span>`
-          )
-          .join("");
-        container.innerHTML = content + content + content; // Triple it to be safe
-
-        anime({
-          targets: "#tech-ticker",
-          translateX: "-33.33%",
-          duration: 20000,
-          easing: "linear",
-          loop: true,
-        });
-      }
-
-      /* --- Initialization & Events --- */
-      function initAnimations() {
-        typeEffect();
-        resizeCanvas();
-        initCanvas();
-        animateCanvas();
-        animateAirPen();
-        setupScrollReveal();
-        initMap();
-        initTicker();
-      }
-
-      window.addEventListener("resize", () => {
-        resizeCanvas();
-        initCanvas(); // Re-init particles on resize
-      });
-
-      // Mobile Menu
-      const btn = document.getElementById("mobile-menu-btn");
-      const menu = document.getElementById("mobile-menu");
-      btn.addEventListener("click", () => {
-        menu.classList.toggle("hidden");
-      });
-
-      // Modal Logic
-      function showModal(success = true, message = null) {
-        const modal = document.getElementById("modal");
-        const title = modal.querySelector("h3");
-        const desc = modal.querySelector("p");
-        const iconContainer = modal.querySelector(".w-16");
-        const icon = iconContainer.querySelector("i");
-        
-        if (success) {
-            title.innerText = "Message Received";
-            desc.innerText = "Thank you. Our team will analyze your request and respond shortly.";
-            icon.className = "fas fa-check text-3xl text-brand-accent";
-            iconContainer.className = "w-16 h-16 bg-brand-accent/20 rounded-full flex items-center justify-center mx-auto mb-4";
-        } else {
-            title.innerText = "Transmission Failed";
-            desc.innerText = message || "Something went wrong. Please try again or email us directly.";
-            icon.className = "fas fa-exclamation-triangle text-3xl text-red-500";
-            iconContainer.className = "w-16 h-16 bg-red-500/20 rounded-full flex items-center justify-center mx-auto mb-4";
-        }
-
-        modal.style.pointerEvents = "auto";
-        modal.style.opacity = "1";
-        modal.querySelector("#modal-content").classList.remove("scale-90");
-        modal.querySelector("#modal-content").classList.add("scale-100");
-      }
-
-      function hideModal() {
-        const modal = document.getElementById("modal");
-        modal.style.opacity = "0";
-        modal.style.pointerEvents = "none";
-        modal.querySelector("#modal-content").classList.add("scale-90");
-        modal.querySelector("#modal-content").classList.remove("scale-100");
-      }
-
-      async function submitForm(event) {
-        event.preventDefault();
-        
-        const form = document.getElementById('contact-form');
-        const submitBtn = form.querySelector('button[type="submit"]');
-        const originalBtnText = submitBtn.innerText;
-        
-        // Loading State
-        submitBtn.disabled = true;
-        submitBtn.innerText = "TRANSMITTING...";
-        
-        const formData = {
-            name: document.getElementById('name').value,
-            email: document.getElementById('email').value,
-            message: document.getElementById('message').value
-        };
-
-        try {
-            const response = await fetch('/send-email', {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json'
-                },
-                body: JSON.stringify(formData)
-            });
-
-            const result = await response.json();
-
-            if (result.success) {
-                showModal(true);
-                form.reset();
-            } else {
-                showModal(false, result.message);
-            }
-        } catch (error) {
-            console.error('Error:', error);
-            showModal(false, "Network error. Please check your connection.");
-        } finally {
-            submitBtn.disabled = false;
-            submitBtn.innerText = originalBtnText;
-        }
-      }
+        })();
+      })();
     </script>
   </body>
 </html>
