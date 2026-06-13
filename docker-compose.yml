@@ -10,6 +10,11 @@ services:
     networks:
       - proxy-manager_default
       - default
+    logging:
+      driver: json-file
+      options:
+        max-size: "10m"
+        max-file: "3"
 
 networks:
   proxy-manager_default:
