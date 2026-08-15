@@ -772,6 +772,13 @@
       .f-field {
         margin-bottom: 18px;
       }
+      .f-hp {
+        position: absolute;
+        left: -10000px;
+        width: 1px;
+        height: 1px;
+        overflow: hidden;
+      }
       .f-field label {
         display: block;
         font: 500 0.68rem/1 var(--font-mono);
@@ -1327,6 +1334,10 @@
             </div>
 
             <form id="contact-form" data-reveal data-delay="90" novalidate="false">
+              <div class="f-hp" aria-hidden="true">
+                <label for="company">Company</label>
+                <input type="text" id="company" name="company" tabindex="-1" autocomplete="off" />
+              </div>
               <div class="f-row">
                 <div class="f-field">
                   <label for="name">Name</label>
@@ -1873,21 +1884,64 @@
           var form = $("#contact-form");
           var btn = $("#form-btn");
           var status = $("#form-status");
+          var formStartedAt = 0;
+          var formToken = "";
           if (!form) return;
+
+          function setStatus(message, kind) {
+            status.textContent = message;
+            status.className = "f-status " + (kind || "");
+          }
+
+          function refreshFormToken() {
+            return fetch("/form-token")
+              .then(function (r) {
+                return r.json();
+              })
+              .then(function (data) {
+                formStartedAt = Number(data.timestamp) || Date.now();
+                formToken = data.token || "";
+              })
+              .catch(function () {
+                formStartedAt = Date.now();
+                formToken = "";
+              });
+          }
+
+          refreshFormToken();
 
           form.addEventListener("submit", function (event) {
             event.preventDefault();
+
+            if ($("#company").value.trim()) {
+              form.reset();
+              setStatus("Message sent - we'll reply by email.", "ok");
+              return;
+            }
+
+            if (!formStartedAt || Date.now() - formStartedAt < 2500) {
+              setStatus("Please take a moment to complete the form.", "err");
+              return;
+            }
+
+            if (!formToken) {
+              setStatus("Form is still initializing. Please try again in a moment.", "err");
+              refreshFormToken();
+              return;
+            }
 
             var payload = {
               name: $("#name").value,
               email: $("#email").value,
               message: $("#message").value,
+              company: $("#company").value,
+              formTimestamp: formStartedAt,
+              formToken: formToken,
             };
 
             btn.disabled = true;
             btn.textContent = "Sending…";
-            status.textContent = "";
-            status.className = "f-status";
+            setStatus("", "");
 
             fetch("/send-email", {
               method: "POST",
@@ -1899,19 +1953,21 @@
               })
               .then(function (result) {
                 if (result.success) {
-                  status.textContent = "Message sent - we'll reply by email.";
-                  status.className = "f-status ok";
+                  setStatus("Message sent - we'll reply by email.", "ok");
                   form.reset();
+                  refreshFormToken();
                 } else {
-                  status.textContent =
-                    result.message || "Something went wrong. Please try again.";
-                  status.className = "f-status err";
+                  setStatus(
+                    result.message || "Something went wrong. Please try again.",
+                    "err"
+                  );
                 }
               })
               .catch(function () {
-                status.textContent =
-                  "Network error - please try again, or email us directly.";
-                status.className = "f-status err";
+                setStatus(
+                  "Network error - please try again, or email us directly.",
+                  "err"
+                );
               })
               .finally(function () {
                 btn.disabled = false;
