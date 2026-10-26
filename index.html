@@ -18,7 +18,7 @@
     <script src="https://cdnjs.cloudflare.com/ajax/libs/animejs/3.2.1/anime.min.js"></script>
 
     <!-- Map demo -->
-    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
+    <link rel="stylesheet" href="https://unpkg.com/maplibre-gl@4.7.1/dist/maplibre-gl.css" />
 
     <!-- Type: Schibsted Grotesk (display) · Hanken Grotesk (text) · Spline Sans Mono (data) -->
     <link rel="preconnect" href="https://fonts.googleapis.com" />
@@ -619,12 +619,6 @@
         border-right: 9px solid transparent;
         border-bottom: 22px solid var(--blue);
         filter: drop-shadow(0 1px 4px rgba(13, 47, 196, 0.45));
-        transform-origin: center 60%;
-        transition: transform 0.12s linear;
-      }
-      .unit-icon {
-        background: transparent;
-        border: none;
       }
       .ping-marker {
         width: 20px;
@@ -644,16 +638,16 @@
           opacity: 0;
         }
       }
-      .leaflet-container {
+      .maplibregl-map {
         font-family: var(--font-body);
         background: #e9ebe6;
       }
-      .leaflet-control-attribution {
+      .maplibregl-ctrl-attrib {
         font: 400 10px/1.4 var(--font-mono) !important;
         background: rgba(251, 251, 249, 0.82) !important;
         color: var(--ink-soft) !important;
       }
-      .leaflet-control-attribution a {
+      .maplibregl-ctrl-attrib a {
         color: var(--blue) !important;
       }
 
@@ -1403,7 +1397,7 @@
               </p>
               <div class="chips">
                 <span class="chip">MapLibre</span>
-                <span class="chip">Leaflet</span>
+                <span class="chip">OpenFreeMap</span>
                 <span class="chip">Real-time</span>
                 <span class="chip">IoT</span>
                 <span class="chip chip--nda">Under NDA</span>
@@ -1480,7 +1474,7 @@
                 spatial visualisation - maps built to be operated, not just
                 looked at.
               </p>
-              <p class="cap-tools"><b>//</b> Leaflet · MapLibre · Custom tiles</p>
+              <p class="cap-tools"><b>//</b> MapLibre · OpenFreeMap · Custom tiles</p>
             </div>
 
             <div class="cap" data-reveal data-delay="140">
@@ -1652,7 +1646,7 @@
       </footer>
     </main>
 
-    <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+    <script src="https://unpkg.com/maplibre-gl@4.7.1/dist/maplibre-gl.js"></script>
 
     <script>
       /* ==========================================================
@@ -1724,7 +1718,7 @@
         (function ticker() {
           var stack = [
             "Python", "C++", "Node.js", "React", "Vue", "Angular",
-            "Leaflet", "MapLibre", "Arduino", "Raspberry Pi",
+            "MapLibre", "OpenFreeMap", "Arduino", "Raspberry Pi",
             "OpenCV", "TensorFlow", "Docker", "AWS",
           ];
           var row = $("#tick-row");
@@ -1991,42 +1985,39 @@
         })();
 
         /* ==========================================================
-           TRACKING DEMO - Leaflet, lazily initialised.
+           TRACKING DEMO - MapLibre GL on OpenFreeMap, lazily initialised.
            Click to dispatch; the unit computes heading and travels.
            ========================================================== */
         (function trackingDemo() {
           var mapEl = $("#demo-map");
-          if (!mapEl || typeof L === "undefined") return;
+          if (!mapEl || typeof maplibregl === "undefined") return;
 
           var started = false;
           function start() {
             if (started) return;
             started = true;
 
-            var map = L.map("demo-map", {
-              zoomControl: false,
-              scrollWheelZoom: false,
-              dragging: true,
-            }).setView([8.5241, 76.9366], 15);
-            map.attributionControl.setPrefix(false);
-
-            L.tileLayer(
-              "https://{s}.basemaps.cartocdn.com/light_all/{z}/{x}/{y}{r}.png",
-              {
-                maxZoom: 19,
-                attribution: "© OpenStreetMap · © CARTO",
-              }
-            ).addTo(map);
-
-            var unitIcon = L.divIcon({
-              className: "unit-icon",
-              html: '<div class="unit"></div>',
-              iconSize: [22, 22],
-              iconAnchor: [11, 11],
+            var map = new maplibregl.Map({
+              container: "demo-map",
+              style: "https://tiles.openfreemap.org/styles/positron",
+              center: [76.9366, 8.5241],
+              zoom: 14,
+              scrollZoom: false,
+              attributionControl: false,
             });
+            map.addControl(
+              new maplibregl.AttributionControl({
+                compact: false,
+                customAttribution: "© OpenStreetMap · OpenFreeMap",
+              })
+            );
 
-            var current = [8.5241, 76.9366];
-            var unit = L.marker(current, { icon: unitIcon }).addTo(map);
+            var unitBody = document.createElement("div");
+            unitBody.className = "unit";
+            var current = [76.9366, 8.5241];
+            var unit = new maplibregl.Marker({ element: unitBody })
+              .setLngLat(current)
+              .addTo(map);
             var target = null;
             var targetMarker = null;
             var rafId = null;
@@ -2036,20 +2027,18 @@
             var elStatus = $("#hud-status");
 
             map.on("click", function (e) {
-              target = [e.latlng.lat, e.latlng.lng];
+              target = [e.lngLat.lng, e.lngLat.lat];
               elCoords.textContent =
-                e.latlng.lat.toFixed(4) + ", " + e.latlng.lng.toFixed(4);
+                e.lngLat.lat.toFixed(4) + ", " + e.lngLat.lng.toFixed(4);
               elStatus.textContent = "En route";
               elStatus.className = "hud-v go";
 
-              if (targetMarker) map.removeLayer(targetMarker);
-              targetMarker = L.marker(e.latlng, {
-                icon: L.divIcon({
-                  className: "ping-marker",
-                  iconSize: [20, 20],
-                  iconAnchor: [10, 10],
-                }),
-              }).addTo(map);
+              if (targetMarker) targetMarker.remove();
+              var pingWrap = document.createElement("div");
+              pingWrap.innerHTML = '<div class="ping-marker"></div>';
+              targetMarker = new maplibregl.Marker({ element: pingWrap })
+                .setLngLat(target)
+                .addTo(map);
 
               if (rafId) cancelAnimationFrame(rafId);
               step();
@@ -2057,16 +2046,14 @@
 
             function step() {
               if (!target) return;
-              var dLat = target[0] - current[0];
-              var dLng = target[1] - current[1];
+              var dLng = target[0] - current[0];
+              var dLat = target[1] - current[1];
 
-              current = [current[0] + dLat * 0.055, current[1] + dLng * 0.055];
-              unit.setLatLng(current);
+              current = [current[0] + dLng * 0.055, current[1] + dLat * 0.055];
+              unit.setLngLat(current);
 
               var ang = (Math.atan2(dLng, dLat) * 180) / Math.PI;
-              var el = unit.getElement();
-              var body = el && el.querySelector(".unit");
-              if (body) body.style.transform = "rotate(" + ang + "deg)";
+              unit.setRotation(ang);
               elHdg.textContent = (((ang % 360) + 360) % 360).toFixed(0) + "°";
 
               if (Math.abs(dLat) < 0.0001 && Math.abs(dLng) < 0.0001) {
