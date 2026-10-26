@@ -927,6 +927,9 @@
          RESPONSIVE
          ============================================================ */
       @media (max-width: 980px) {
+        .nav-links {
+          gap: 20px;
+        }
         .hero .wrap {
           grid-template-columns: 1fr;
         }
@@ -998,6 +1001,7 @@
         }
       }
     </style>
+    <link rel="stylesheet" href="assets/pulse/pulse.css" />
   </head>
   <body>
     <!-- ============================ NAV ============================ -->
@@ -1009,6 +1013,7 @@
         </a>
 
         <nav class="nav-links" aria-label="Primary">
+          <a href="#apps">Apps</a>
           <a href="#work">Work</a>
           <a href="#capabilities">Capabilities</a>
           <a href="#studio">Studio</a>
@@ -1022,6 +1027,7 @@
     </header>
 
     <nav class="mnav" id="mnav" aria-label="Mobile">
+      <a href="#apps">Apps</a>
       <a href="#work">Work</a>
       <a href="#capabilities">Capabilities</a>
       <a href="#studio">Studio</a>
@@ -1109,13 +1115,190 @@
       <div class="tick" aria-hidden="true">
         <div class="tick-row" id="tick-row"></div>
       </div>
+      <!-- ============================ APPS ============================ -->
+      <section class="sec pl" id="apps">
+        <div class="wrap">
+          <header class="sec-head" data-reveal>
+            <div>
+              <p class="k k--blue">Apps · Logix Pulse</p>
+            </div>
+            <p class="k">Our own product · Polar H10</p>
+          </header>
+
+          <!-- Hero: real screenshots in CSS phone bezels -->
+          <div class="pl-hero" id="pl-hero">
+            <div>
+              <h2 class="pl-title">
+                <span class="pl-w"><span>Every</span></span>
+                <span class="pl-w"><span>beat.</span></span><br />
+                <span class="pl-w"><span>Every</span></span>
+                <span class="pl-w"><span><em>breath.</em></span></span>
+              </h2>
+              <p class="pl-lede" data-pl-in><b>Free.</b> Polar H10. No account.</p>
+              <p class="pl-status" data-pl-in>
+                <span class="live k k--blue"><i aria-hidden="true"></i>Android · releasing soon</span>
+              </p>
+            </div>
+
+            <div class="pl-phones">
+              <figure class="pl-phone pl-phone--back">
+                <img
+                  src="assets/pulse/screens/reading-strip.png"
+                  width="720"
+                  height="1480"
+                  alt="Logix Pulse recording screen: the ECG strip with a beat left out of HRV marked"
+                  decoding="async"
+                />
+              </figure>
+              <figure class="pl-phone pl-phone--front">
+                <img
+                  src="assets/pulse/screens/today.png"
+                  width="720"
+                  height="1480"
+                  alt="Logix Pulse recording screen: resting HRV, heart rate, breathing rate and the raw ECG"
+                  decoding="async"
+                />
+              </figure>
+            </div>
+          </div>
+
+          <!-- Exhibit: the real ECG, drawn the way the app draws it -->
+          <figure class="exh pl-exh pl-block" id="pl-ecg" data-reveal>
+            <div class="exh-h">
+              <span class="k">Exhibit · Raw ECG</span>
+              <span class="k k--blue">Real · 130 Hz</span>
+            </div>
+            <div class="pl-stage">
+              <div class="pl-card">
+                <p class="pl-card-t">ECG</p>
+                <svg class="pl-svg" id="pl-ecg-svg" role="img" aria-label="Ten seconds of a real ECG from a Polar H10 chest strap, R peaks marked" xmlns="http://www.w3.org/2000/svg"></svg>
+                <p class="pl-nums" id="pl-ecg-nums">
+                  <span><b data-key="rmssd_ms">–</b> ms RMSSD</span><i aria-hidden="true">·</i>
+                  <span><b data-key="heart_rate_bpm">–</b> bpm</span><i aria-hidden="true">·</i>
+                  <span>breathing <b data-key="breathing_per_minute">–</b></span>
+                </p>
+              </div>
+            </div>
+            <figcaption class="exh-f">
+              <span class="k">A real morning check, unedited</span>
+              <button class="mini" id="pl-ecg-replay" type="button">Replay</button>
+            </figcaption>
+          </figure>
+
+          <!-- Exhibit: 28 mornings against the usual range (Today page chart) -->
+          <div class="pl-row">
+            <figure class="exh pl-exh" id="pl-trend" data-reveal>
+              <div class="exh-h">
+                <span class="k">Exhibit · Today</span>
+                <span class="k k--blue">28 mornings</span>
+              </div>
+              <div class="pl-stage">
+                <p class="pl-head" id="pl-trend-head">Resting HRV</p>
+                <p class="pl-sub">This week: HRV lower than your usual range, resting heart rate higher than usual</p>
+                <div class="pl-card pl-card--2">
+                  <p class="pl-card-t pl-card-t--sm">Resting HRV · last 28 mornings</p>
+                  <svg class="pl-svg" id="pl-trend-svg" role="img" aria-label="Resting HRV for 28 mornings against the usual range, with the 7-day average and resting heart rate" xmlns="http://www.w3.org/2000/svg"></svg>
+                  <div class="pl-dates"><span id="pl-trend-d0"></span><span id="pl-trend-d1"></span></div>
+                  <p class="pl-legend">● morning · ○ not counted, tap for why · — 7-day average</p>
+                </div>
+                <span class="pl-pbtn" aria-hidden="true">Morning check · 3 min</span>
+                <p class="pl-snack" id="pl-trend-snack" role="status" aria-live="polite"></p>
+              </div>
+              <figcaption class="exh-f">
+                <span class="k">Illustrative data</span>
+                <button class="mini" id="pl-trend-replay" type="button">Replay</button>
+              </figcaption>
+            </figure>
+
+            <div class="pl-say" data-reveal data-delay="90">
+              <p class="k">Morning check · 3 min</p>
+              <p class="pl-big">Your usual range.</p>
+              <p class="pl-big pl-big--blue">Not a score.</p>
+            </div>
+          </div>
+
+          <!-- Exhibit: breathing rate from the strap's accelerometer -->
+          <div class="pl-row pl-row--flip">
+            <figure class="exh pl-exh" id="pl-breath" data-reveal>
+              <div class="exh-h">
+                <span class="k">Exhibit · Breathing</span>
+                <span class="k k--blue">12 min in 24 s</span>
+              </div>
+              <div class="pl-stage">
+                <div class="pl-card">
+                  <div class="pl-br-top">
+                    <div>
+                      <output class="pl-rate" id="pl-rate">–</output><span class="pl-unit">per minute</span>
+                      <p class="pl-sub" id="pl-rate-stage">&nbsp;</p>
+                    </div>
+                    <span class="pl-chip"><i aria-hidden="true"></i>accelerometer + ECG</span>
+                  </div>
+                  <svg class="pl-svg pl-wave" id="pl-wave-svg" role="img" aria-label="Chest motion from the strap's accelerometer during paced breathing" xmlns="http://www.w3.org/2000/svg"></svg>
+                  <svg class="pl-svg pl-rates" id="pl-rates-svg" role="img" aria-label="Breathing rate read per minute against the paced targets" xmlns="http://www.w3.org/2000/svg"></svg>
+                </div>
+              </div>
+              <figcaption class="exh-f">
+                <span class="k">Chest motion · our reading per minute</span>
+              </figcaption>
+            </figure>
+
+            <div class="pl-say" data-reveal data-delay="90">
+              <p class="k">Breathing rate</p>
+              <p class="pl-big">Breathing rate from the strap you already own.</p>
+              <p class="pl-big pl-big--blue">Measured, not guessed.</p>
+              <p class="k pl-proof">
+                Paced at 6 · 10 · 15 · 20 · 12 per minute,<br />
+                read 6.0 · 10.0 · 15.0 · 20.1 · 12.0
+              </p>
+            </div>
+          </div>
+
+          <!-- What nobody else does -->
+          <div class="pl-only" id="pl-only">
+            <p class="k k--blue" data-reveal>What nobody else does</p>
+            <div class="pl-only-i" data-reveal>
+              <span class="k">01</span>
+              <p>Your raw ECG, on your phone</p>
+            </div>
+            <div class="pl-only-i" data-reveal data-delay="80">
+              <span class="k">02</span>
+              <p>Breathing rate from the chest strap</p>
+            </div>
+            <div class="pl-only-i" data-reveal data-delay="160">
+              <span class="k">03</span>
+              <p>Beats left out of HRV, shown on the strip</p>
+            </div>
+            <p class="pl-free" id="pl-free">Free.</p>
+          </div>
+
+          <!-- Release -->
+          <div class="pl-rel">
+            <div class="pl-rel-card" data-reveal>
+              <div>
+                <p class="pl-rel-t">Android</p>
+                <span class="live k k--blue"><i aria-hidden="true"></i>Releasing soon</span>
+              </div>
+              <span class="pl-badge">Google Play<br />soon</span>
+            </div>
+            <div class="pl-rel-card pl-rel-card--later" data-reveal data-delay="80">
+              <div>
+                <p class="pl-rel-t">iOS</p>
+                <span class="k">Later</span>
+              </div>
+              <span class="pl-badge">App Store<br />later</span>
+            </div>
+            <a class="btn btn--primary" href="mailto:admin@logixmotion.com?subject=Logix%20Pulse%20release" data-reveal data-delay="160">Tell me when <span class="arr">→</span></a>
+          </div>
+        </div>
+      </section>
+
       <!-- ============================ WORK ============================ -->
-      <section class="sec" id="work">
+      <section class="sec" id="work" style="padding-top: 0">
         <div class="wrap">
           <header class="sec-head" data-reveal>
             <div>
               <p class="k k--blue">Selected work</p>
-              <h2 class="sec-title">Two projects we can show.<br />Quietly.</h2>
+              <h2 class="sec-title">Three projects we can show.<br />Two quietly.</h2>
             </div>
             <p class="k">Client names withheld - NDA</p>
           </header>
@@ -1225,6 +1408,42 @@
                 <span class="chip">IoT</span>
                 <span class="chip chip--nda">Under NDA</span>
               </div>
+            </div>
+          </article>
+
+          <!-- Case 03 - our own product -->
+          <article class="case">
+            <div class="case-exh" data-reveal>
+              <figure class="exh">
+                <div class="exh-h">
+                  <span class="k">Project 03 - Exhibit</span>
+                  <span class="k k--blue">Raw ECG → beats</span>
+                </div>
+                <div class="pl-stage pl-stage--mini">
+                  <svg class="pl-svg" id="pl-ecg-mini" role="img" aria-label="Ten seconds of a real ECG with its R peaks marked, as drawn in Logix Pulse" xmlns="http://www.w3.org/2000/svg"></svg>
+                </div>
+                <figcaption class="exh-f">
+                  <span class="k">Ten real seconds, at rest</span>
+                </figcaption>
+              </figure>
+            </div>
+
+            <div class="case-info" data-reveal data-delay="90">
+              <p class="k">Project 03 · Logix Pulse</p>
+              <h3 class="case-t">Our own product: Logix Pulse</h3>
+              <p>
+                A free Polar H10 app we design, build and run ourselves. Raw
+                ECG on your phone, HRV against your usual range, and breathing
+                rate from the strap.
+              </p>
+              <div class="chips">
+                <span class="chip">Flutter</span>
+                <span class="chip">BLE</span>
+                <span class="chip">Go</span>
+                <span class="chip">Signal processing</span>
+                <span class="chip chip--free">Free app</span>
+              </div>
+              <a class="btn btn--sm pl-see" href="#apps">See the app <span class="arr">→</span></a>
             </div>
           </article>
         </div>
@@ -1379,6 +1598,7 @@
             <div>
               <span class="k">Site</span>
               <ul>
+                <li><a href="#apps">Apps</a></li>
                 <li><a href="#work">Work</a></li>
                 <li><a href="#capabilities">Capabilities</a></li>
                 <li><a href="#studio">Studio</a></li>
@@ -1986,5 +2206,6 @@
         })();
       })();
     </script>
+    <script src="assets/pulse/pulse.js" onerror="document.documentElement.classList.add('pl-off')"></script>
   </body>
 </html>
