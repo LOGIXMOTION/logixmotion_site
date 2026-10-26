@@ -363,6 +363,10 @@ html.anim:not(.pl-off) .pl-phone {
 .pl-free span {
   display: inline-block;
 }
+.pl-free-note {
+  margin-top: 10px;
+  max-width: 22ch;
+}
 
 /* ---- release ---- */
 .pl-rel {
@@ -442,7 +446,7 @@ html.anim:not(.pl-off) .pl-phone {
   .pl-only {
     grid-template-columns: repeat(3, minmax(0, 1fr));
   }
-  .pl-free {
+  .pl-free-wrap {
     grid-column: 1 / -1;
     margin-top: 30px;
   }
