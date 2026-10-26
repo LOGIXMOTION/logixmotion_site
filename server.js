@@ -18,7 +18,7 @@ const submissionsByIp = new Map();
 // Middleware
 app.use(bodyParser.json({ limit: '10kb' }));
 app.use(bodyParser.urlencoded({ extended: true, limit: '10kb' }));
-app.use(express.static(path.join(__dirname)));
+app.use(express.static(path.join(__dirname), { extensions: ['html'] }));
 
 // Email Transporter Configuration
 const transporter = nodemailer.createTransport({

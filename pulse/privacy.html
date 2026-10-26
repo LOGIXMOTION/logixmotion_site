@@ -1,0 +1,66 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Logix Pulse · Privacy</title>
+<style>
+  body { margin: 0; background: #f3f4f1; color: #16181b; font: 400 1rem/1.65 "Helvetica Neue", Arial, sans-serif; }
+  main { max-width: 720px; margin: 0 auto; padding: 48px 24px 80px; }
+  h1 { font-size: 2rem; line-height: 1.15; margin: 0 0 4px; }
+  h2 { font-size: 1.15rem; margin: 36px 0 8px; }
+  p, li { color: #2a2e33; }
+  .k { font: 500 0.72rem/1.4 "SFMono-Regular", Consolas, monospace; letter-spacing: 0.14em; text-transform: uppercase; color: #565b62; }
+  a { color: #0d2fc4; }
+  table { border-collapse: collapse; width: 100%; font-size: 0.95rem; }
+  td, th { border-top: 1px solid #d9dbd4; padding: 8px 6px; text-align: left; vertical-align: top; }
+</style>
+</head>
+<body>
+<main>
+  <p class="k">LOGIXMOTION PRIVATE LIMITED · Logix Pulse</p>
+  <h1>Privacy policy</h1>
+  <p class="k">Last updated 26 October 2026</p>
+
+  <p>Logix Pulse records the ECG, heart-rate intervals and chest movement from your own Polar H10 chest strap and shows measurements about them. It is not a medical device. This page says exactly what leaves your phone, why, and how to remove it.</p>
+
+  <h2>No account, no name</h2>
+  <p>The app has no sign-in. On first launch it creates a random identifier (a UUID, the "install id"). The server knows you only by that id. We do not collect your name, e-mail address, phone number, location or contacts.</p>
+
+  <h2>What is sent, and only with your consent</h2>
+  <table>
+    <tr><th>Data</th><th>When</th><th>Why</th></tr>
+    <tr><td>Recordings: ECG samples, heart-rate intervals and accelerometer samples from the strap, with start/end time, recording type, strap model and firmware, app version</td><td>After each recording, if "Upload recordings for analysis" is on (asked on first launch, changeable in Settings)</td><td>The measurements (heart-rate variability, breathing rate, threshold estimates, your usual range) are calculated on our server</td></tr>
+    <tr><td>Daily usage counts: how often each screen was opened that day, app version, platform</td><td>Once a day, if "Send daily usage counts" is on</td><td>To see which features are used and fix what isn't</td></tr>
+    <tr><td>Feedback you type and choose to send ("Message the developer", suggestions), with app version and platform</td><td>Only when you press "Send to dev"</td><td>It is stored and e-mailed to the developer so we can read and answer it</td></tr>
+  </table>
+  <p>With upload off, recordings stay on your phone and no analysis is shown. The app never sends anything in the background other than the items above.</p>
+
+  <h2>Where it is stored</h2>
+  <p>On a server we operate in Germany (EU), over encrypted connections (HTTPS) only. Data is not sold, not shared with advertisers, and not used to train third-party AI models. The feedback e-mail passes through our e-mail provider (Fastmail).</p>
+
+  <h2>On your phone</h2>
+  <p>Recordings and results are kept in the app's private storage. They are excluded from Android's cloud backup. Exports (CSV or PDF) are created only when you choose to share them, and go where you send them.</p>
+
+  <h2>Deleting your data</h2>
+  <ul>
+    <li>One recording: delete it in History; it is removed from the phone and the server.</li>
+    <li>Everything on the server: Settings → Your data → "Delete all my data on the server".</li>
+    <li>Uninstalling the app removes everything on the phone. Server data tied to your install id can also be deleted on request: write to <a href="mailto:dev@logixmotion.com">dev@logixmotion.com</a> with the install id shown in Settings → About.</li>
+  </ul>
+
+  <h2>Permissions the app asks for</h2>
+  <ul>
+    <li><b>Nearby devices / Bluetooth</b>: to find and connect to your strap.</li>
+    <li><b>Location</b> (Android 11 and older only): Android requires it to scan for Bluetooth devices; the app never reads your location.</li>
+    <li><b>Notifications</b> (Android 13 and newer): to show that a recording is running, so Android keeps it alive when the screen is off.</li>
+  </ul>
+
+  <h2>Children</h2>
+  <p>Logix Pulse is not directed at children under 16.</p>
+
+  <h2>Contact</h2>
+  <p>LOGIXMOTION PRIVATE LIMITED · <a href="mailto:dev@logixmotion.com">dev@logixmotion.com</a> · <a href="https://logixmotion.com">logixmotion.com</a></p>
+</main>
+</body>
+</html>
