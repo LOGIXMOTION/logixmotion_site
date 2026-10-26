@@ -1,5 +1,5 @@
 /* ==========================================================
-   LOGIX PULSE - #apps exhibits and Work case 03.
+   LOGIX PULSE - /pulse exhibits and the home page's Work case 03.
    Real data from assets/pulse/*.json, drawn into SVG at the
    container's own pixel width so labels stay app-sized; the
    geometry and colours are the app's (EcgStrip, MorningChart).
@@ -970,7 +970,7 @@
 
   /* ---------- data ---------- */
   trendExhibit();
-  getJson("assets/pulse/ecg-10s.json")
+  getJson("/assets/pulse/ecg-10s.json")
     .then(function (ecg) {
       ecgExhibit(ecg);
       ecgMini(ecg);
@@ -979,10 +979,12 @@
       console.warn("Logix Pulse ECG:", err);
       fail([$("#pl-ecg-svg"), $("#pl-ecg-mini")].filter(Boolean));
     });
-  getJson("assets/pulse/breathing.json")
-    .then(breathExhibit)
-    .catch(function (err) {
-      console.warn("Logix Pulse breathing:", err);
-      fail([$("#pl-wave-svg"), $("#pl-rates-svg")].filter(Boolean));
-    });
+  if ($("#pl-breath")) {
+    getJson("/assets/pulse/breathing.json")
+      .then(breathExhibit)
+      .catch(function (err) {
+        console.warn("Logix Pulse breathing:", err);
+        fail([$("#pl-wave-svg"), $("#pl-rates-svg")].filter(Boolean));
+      });
+  }
 })();

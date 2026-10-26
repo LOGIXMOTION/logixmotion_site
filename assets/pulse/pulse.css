@@ -1,5 +1,6 @@
 /* ============================================================
-   APPS - Logix Pulse
+   LOGIX PULSE - the /pulse page, its privacy page, and the home
+   page's #apps teaser and Work case 03.
    Site-native frames (paper & cobalt) around app-native stages:
    inside every exhibit the colours, type and chart geometry are
    the app's own (Material 3 dark, teal seed).
@@ -58,11 +59,11 @@
   margin-top: 26px;
 }
 /* start states for the hero entrance; pulse.js lifts them (pl-off if it fails to load) */
-html.anim:not(.pl-off) .pl-w > span {
+html.anim:not(.pl-off) .pl-hero .pl-w > span {
   transform: translateY(112%);
 }
-html.anim:not(.pl-off) [data-pl-in],
-html.anim:not(.pl-off) .pl-phone {
+html.anim:not(.pl-off) .pl-hero [data-pl-in],
+html.anim:not(.pl-off) .pl-hero .pl-phone {
   opacity: 0;
 }
 
@@ -430,12 +431,91 @@ html.anim:not(.pl-off) .pl-phone {
   margin-top: 24px;
 }
 
+/* ---- home page teaser (#apps) ---- */
+.pl-teaser {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) auto;
+  gap: clamp(36px, 6vw, 80px);
+  align-items: center;
+}
+.pl-teaser-icon {
+  width: 72px;
+  height: 72px;
+  border-radius: 16px;
+  margin-bottom: 28px;
+}
+.pl-teaser .pl-lede {
+  max-width: 34ch;
+}
+.pl-teaser-cta {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 16px 26px;
+  margin-top: 34px;
+}
+.pl-phone--solo {
+  position: relative;
+  margin-right: clamp(0px, 5vw, 64px);
+}
+
+/* ---- Logix Pulse pages: header and footer ---- */
+.pl-top .wrap,
+.pl-foot .wrap {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  flex-wrap: wrap;
+  gap: 12px 24px;
+}
+.pl-top .wrap {
+  min-height: var(--nav-h);
+}
+.pl-top a.k {
+  text-decoration: none;
+}
+.pl-top a.k:hover {
+  color: var(--ink);
+}
+.pl-page {
+  padding-top: clamp(24px, 4vw, 48px);
+}
+.pl-foot {
+  border-top: 1px solid var(--line);
+  padding: 26px 0 30px;
+}
+.pl-foot nav {
+  display: flex;
+  gap: 26px;
+}
+.pl-foot a {
+  font: 600 0.92rem/1 var(--font-body);
+  color: var(--ink-soft);
+  text-decoration: none;
+  padding: 8px 0;
+}
+.pl-foot a:hover {
+  color: var(--ink);
+  text-decoration: underline;
+  text-underline-offset: 6px;
+  text-decoration-thickness: 1.5px;
+  text-decoration-color: var(--blue);
+}
+
 /* ---- responsive ---- */
 @media (max-width: 980px) {
   .pl-hero,
   .pl-row {
     grid-template-columns: 1fr;
     gap: 32px;
+  }
+  .pl-teaser {
+    grid-template-columns: 1fr;
+    gap: 48px;
+  }
+  .pl-phone--solo {
+    justify-self: center;
+    margin-right: 0;
   }
   .pl-row--flip .pl-exh {
     order: 1;

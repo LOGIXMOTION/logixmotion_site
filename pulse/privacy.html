@@ -4,20 +4,37 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>Logix Pulse · Privacy</title>
+<meta name="theme-color" content="#F3F4F1">
+<link rel="icon" type="image/svg+xml" href="/assets/pulse/icon.svg">
+<link rel="apple-touch-icon" href="/assets/pulse/apple-touch-icon.png">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Schibsted+Grotesk:wght@500;600;700;800&family=Hanken+Grotesk:wght@400;500;600;700&family=Spline+Sans+Mono:wght@400;500&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="/assets/site.css">
+<link rel="stylesheet" href="/assets/pulse/pulse.css">
 <style>
-  body { margin: 0; background: #f3f4f1; color: #16181b; font: 400 1rem/1.65 "Helvetica Neue", Arial, sans-serif; }
-  main { max-width: 720px; margin: 0 auto; padding: 48px 24px 80px; }
-  h1 { font-size: 2rem; line-height: 1.15; margin: 0 0 4px; }
-  h2 { font-size: 1.15rem; margin: 36px 0 8px; }
+  .pl-doc { max-width: 720px; margin: 0 auto; padding: 48px 24px 80px; }
+  h1 { font: 700 2rem/1.15 var(--font-display); letter-spacing: -0.02em; margin: 0 0 4px; }
+  h2 { font: 700 1.15rem/1.3 var(--font-display); margin: 36px 0 8px; }
+  .pl-doc p, .pl-doc ul, .pl-doc table { margin: 1em 0; }
+  .pl-doc ul { padding-left: 40px; }
   p, li { color: #2a2e33; }
-  .k { font: 500 0.72rem/1.4 "SFMono-Regular", Consolas, monospace; letter-spacing: 0.14em; text-transform: uppercase; color: #565b62; }
-  a { color: #0d2fc4; }
+  .pl-doc a { color: var(--blue); }
   table { border-collapse: collapse; width: 100%; font-size: 0.95rem; }
-  td, th { border-top: 1px solid #d9dbd4; padding: 8px 6px; text-align: left; vertical-align: top; }
+  td, th { border-top: 1px solid var(--line); padding: 8px 6px; text-align: left; vertical-align: top; }
 </style>
 </head>
 <body>
-<main>
+<header class="pl-top">
+  <div class="wrap">
+    <a href="/" class="brand" aria-label="LOGIXMOTION - home">
+      <span class="brand-mark" aria-hidden="true"></span>
+      LOGIXMOTION
+    </a>
+    <a class="k" href="/pulse">Logix Pulse</a>
+  </div>
+</header>
+<main class="pl-doc">
   <p class="k">LOGIXMOTION PRIVATE LIMITED · Logix Pulse</p>
   <h1>Privacy policy</h1>
   <p class="k">Last updated 26 October 2026</p>
@@ -62,5 +79,14 @@
   <h2>Contact</h2>
   <p>LOGIXMOTION PRIVATE LIMITED · <a href="mailto:dev@logixmotion.com">dev@logixmotion.com</a> · <a href="https://logixmotion.com">logixmotion.com</a></p>
 </main>
+<footer class="pl-foot">
+  <div class="wrap">
+    <nav aria-label="Footer">
+      <a href="/pulse/privacy" aria-current="page">Privacy</a>
+      <a href="/#contact">Contact</a>
+    </nav>
+    <span class="k">© LOGIXMOTION PRIVATE LIMITED</span>
+  </div>
+</footer>
 </body>
 </html>

@@ -9,10 +9,7 @@
       content="LOGIXMOTION is a software and hardware engineering studio. Embedded systems, sensor-driven products, and real-time map interfaces for asset tracking."
     />
     <meta name="theme-color" content="#F3F4F1" />
-    <link
-      rel="icon"
-      href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'><rect width='64' height='64' fill='%23F3F4F1'/><rect x='12' y='12' width='40' height='40' fill='%230D2FC4'/><circle cx='32' cy='32' r='7' fill='%23F3F4F1'/></svg>"
-    />
+    <link rel="icon" type="image/svg+xml" href="assets/favicon.svg" />
 
     <!-- Motion: anime.js (same proven build as before) -->
     <script src="https://cdnjs.cloudflare.com/ajax/libs/animejs/3.2.1/anime.min.js"></script>
@@ -37,130 +34,8 @@
       );
     </script>
 
+    <link rel="stylesheet" href="assets/site.css" />
     <style>
-      /* ============================================================
-         LOGIXMOTION - design tokens
-         Paper & cobalt: a precision-instrument palette.
-         ============================================================ */
-      :root {
-        --paper: #f3f4f1; /* cool chalk paper */
-        --paper-2: #fbfbf9; /* panel surface */
-        --ink: #16181b; /* near-black ink */
-        --ink-2: #0f1115; /* dark section ground */
-        --ink-soft: #565b62; /* secondary text */
-        --line: #d9dbd4; /* hairline rules */
-        --line-dark: #262b33; /* hairlines on dark */
-        --blue: #0d2fc4; /* cobalt - the one accent */
-        --blue-deep: #0a2399;
-        --blue-soft: #7b93ff; /* cobalt for dark ground */
-        --ok: #7fd99a;
-        --err: #ff8b8b;
-
-        --font-display: "Schibsted Grotesk", "Helvetica Neue", Arial, sans-serif;
-        --font-body: "Hanken Grotesk", "Helvetica Neue", Arial, sans-serif;
-        --font-mono: "Spline Sans Mono", "SFMono-Regular", Consolas, monospace;
-
-        --nav-h: 72px;
-      }
-
-      * {
-        margin: 0;
-        padding: 0;
-        box-sizing: border-box;
-      }
-
-      html {
-        scroll-behavior: smooth;
-        scroll-padding-top: calc(var(--nav-h) + 16px);
-      }
-
-      body {
-        background: var(--paper);
-        color: var(--ink);
-        font: 400 1rem/1.65 var(--font-body);
-        -webkit-font-smoothing: antialiased;
-        text-rendering: optimizeLegibility;
-        overflow-x: hidden;
-      }
-
-      ::selection {
-        background: var(--blue);
-        color: #fff;
-      }
-
-      img,
-      svg {
-        display: block;
-        max-width: 100%;
-      }
-
-      a {
-        color: inherit;
-      }
-
-      :focus-visible {
-        outline: 2px solid var(--blue);
-        outline-offset: 3px;
-        border-radius: 1px;
-      }
-
-      .wrap {
-        max-width: 1180px;
-        margin-inline: auto;
-        padding-inline: clamp(20px, 4vw, 40px);
-      }
-
-      /* ---- micro label (mono kicker) ---- */
-      .k {
-        font: 500 0.72rem/1.4 var(--font-mono);
-        letter-spacing: 0.14em;
-        text-transform: uppercase;
-        color: var(--ink-soft);
-      }
-      .k--blue {
-        color: var(--blue);
-      }
-
-      /* ---- buttons ---- */
-      .btn {
-        display: inline-flex;
-        align-items: center;
-        gap: 10px;
-        font: 600 0.95rem/1 var(--font-body);
-        padding: 14px 22px;
-        border: 1px solid var(--ink);
-        border-radius: 2px;
-        background: transparent;
-        color: var(--ink);
-        text-decoration: none;
-        cursor: pointer;
-        transition: background 0.18s ease, color 0.18s ease, border-color 0.18s ease;
-      }
-      .btn:hover {
-        background: var(--ink);
-        color: var(--paper);
-      }
-      .btn--primary {
-        background: var(--blue);
-        border-color: var(--blue);
-        color: #fff;
-      }
-      .btn--primary:hover {
-        background: var(--blue-deep);
-        border-color: var(--blue-deep);
-        color: #fff;
-      }
-      .btn--sm {
-        padding: 10px 16px;
-        font-size: 0.88rem;
-      }
-      .btn .arr {
-        transition: transform 0.18s ease;
-      }
-      .btn:hover .arr {
-        transform: translateX(3px);
-      }
-
       /* ============================================================
          NAV
          ============================================================ */
@@ -184,20 +59,6 @@
         align-items: center;
         justify-content: space-between;
         gap: 24px;
-      }
-      .brand {
-        display: inline-flex;
-        align-items: center;
-        gap: 11px;
-        text-decoration: none;
-        font: 700 1.15rem/1 var(--font-display);
-        letter-spacing: -0.015em;
-      }
-      .brand-mark {
-        width: 11px;
-        height: 11px;
-        background: var(--blue);
-        flex: none;
       }
       .nav-links {
         display: flex;
@@ -351,27 +212,6 @@
         padding: 11px 14px;
         border-bottom: 1px solid var(--line);
       }
-      .live {
-        display: inline-flex;
-        align-items: center;
-        gap: 8px;
-      }
-      .live i {
-        width: 7px;
-        height: 7px;
-        border-radius: 50%;
-        background: var(--blue);
-        animation: livepulse 2.2s ease-in-out infinite;
-      }
-      @keyframes livepulse {
-        0%,
-        100% {
-          opacity: 1;
-        }
-        50% {
-          opacity: 0.25;
-        }
-      }
       .inst-svg {
         padding: 16px 16px 8px;
       }
@@ -440,25 +280,8 @@
       }
 
       /* ============================================================
-         SECTIONS - shared
+         SECTIONS
          ============================================================ */
-      .sec {
-        padding: clamp(72px, 9vw, 124px) 0;
-      }
-      html.anim [data-reveal] {
-        opacity: 0;
-        transform: translateY(26px);
-      }
-      .sec-head {
-        display: flex;
-        align-items: flex-end;
-        justify-content: space-between;
-        flex-wrap: wrap;
-        gap: 14px 24px;
-        border-top: 1px solid var(--ink);
-        padding-top: 18px;
-        margin-bottom: clamp(36px, 6vw, 62px);
-      }
       .sec-title {
         font: 700 clamp(1.9rem, 3.6vw, 3rem) / 1.04 var(--font-display);
         letter-spacing: -0.02em;
@@ -518,49 +341,6 @@
         color: var(--blue);
       }
 
-      /* exhibit frame (shared by pen + map) */
-      .exh {
-        border: 1px solid var(--ink);
-        border-radius: 2px;
-        background: var(--paper-2);
-        overflow: hidden;
-      }
-      .exh-h {
-        display: flex;
-        align-items: center;
-        justify-content: space-between;
-        gap: 12px;
-        padding: 10px 14px;
-        border-bottom: 1px solid var(--line);
-      }
-      .exh-f {
-        display: flex;
-        align-items: center;
-        justify-content: space-between;
-        gap: 12px;
-        padding: 9px 14px;
-        border-top: 1px solid var(--line);
-      }
-      .exh-f .k {
-        font-size: 0.64rem;
-        letter-spacing: 0.1em;
-      }
-      .mini {
-        font: 500 0.66rem/1 var(--font-mono);
-        letter-spacing: 0.12em;
-        text-transform: uppercase;
-        border: 1px solid var(--ink);
-        border-radius: 2px;
-        background: transparent;
-        color: var(--ink);
-        padding: 7px 12px;
-        cursor: pointer;
-        transition: background 0.15s ease, color 0.15s ease;
-      }
-      .mini:hover {
-        background: var(--ink);
-        color: var(--paper);
-      }
       .pen-stage {
         padding: 6px 8px 0;
       }
@@ -888,18 +668,6 @@
       .footer ul a:focus-visible .ext-arrow {
         transform: translate(2px, -2px);
       }
-      /* visually hidden, but available to assistive tech */
-      .sr-only {
-        position: absolute;
-        width: 1px;
-        height: 1px;
-        padding: 0;
-        margin: -1px;
-        overflow: hidden;
-        clip: rect(0, 0, 0, 0);
-        white-space: nowrap;
-        border: 0;
-      }
       .footer-bottom {
         display: flex;
         justify-content: space-between;
@@ -981,19 +749,6 @@
           gap: 26px;
         }
       }
-
-      @media (prefers-reduced-motion: reduce) {
-        html {
-          scroll-behavior: auto;
-        }
-        *,
-        *::before,
-        *::after {
-          animation-duration: 0.01ms !important;
-          animation-iteration-count: 1 !important;
-          transition-duration: 0.01ms !important;
-        }
-      }
     </style>
     <link rel="stylesheet" href="assets/pulse/pulse.css" />
   </head>
@@ -1007,7 +762,7 @@
         </a>
 
         <nav class="nav-links" aria-label="Primary">
-          <a href="#apps">Apps</a>
+          <a href="/pulse">Apps</a>
           <a href="#work">Work</a>
           <a href="#capabilities">Capabilities</a>
           <a href="#studio">Studio</a>
@@ -1021,7 +776,7 @@
     </header>
 
     <nav class="mnav" id="mnav" aria-label="Mobile">
-      <a href="#apps">Apps</a>
+      <a href="/pulse">Apps</a>
       <a href="#work">Work</a>
       <a href="#capabilities">Capabilities</a>
       <a href="#studio">Studio</a>
@@ -1110,6 +865,7 @@
         <div class="tick-row" id="tick-row"></div>
       </div>
       <!-- ============================ APPS ============================ -->
+      <!-- Teaser: Logix Pulse has its own page at /pulse -->
       <section class="sec pl" id="apps">
         <div class="wrap">
           <header class="sec-head" data-reveal>
@@ -1119,172 +875,27 @@
             <p class="k">Our own product · Polar H10</p>
           </header>
 
-          <!-- Hero: real screenshots in CSS phone bezels -->
-          <div class="pl-hero" id="pl-hero">
-            <div>
-              <h2 class="pl-title">
-                <span class="pl-w"><span>Every</span></span>
-                <span class="pl-w"><span>beat.</span></span><br />
-                <span class="pl-w"><span>Every</span></span>
-                <span class="pl-w"><span><em>breath.</em></span></span>
-              </h2>
-              <p class="pl-lede" data-pl-in><b>Every current feature, free.</b> Polar H10. No account.</p>
-              <p class="pl-status" data-pl-in>
+          <div class="pl-teaser">
+            <div data-reveal>
+              <img class="pl-teaser-icon" src="assets/pulse/icon.svg" width="72" height="72" alt="Logix Pulse app icon" />
+              <h2 class="pl-title">Every beat.<br />Every <em>breath.</em></h2>
+              <p class="pl-lede">Raw ECG, resting HRV and breathing rate from your Polar H10.<br /><b>Every current feature, free.</b></p>
+              <div class="pl-teaser-cta">
+                <a class="btn btn--primary" href="/pulse">See the app <span class="arr">→</span></a>
                 <span class="live k k--blue"><i aria-hidden="true"></i>Android · releasing soon</span>
-              </p>
-            </div>
-
-            <div class="pl-phones">
-              <figure class="pl-phone pl-phone--back">
-                <img
-                  src="assets/pulse/screens/reading-strip.png"
-                  width="720"
-                  height="1480"
-                  alt="Logix Pulse recording screen: the ECG strip with a beat left out of HRV marked"
-                  decoding="async"
-                />
-              </figure>
-              <figure class="pl-phone pl-phone--front">
-                <img
-                  src="assets/pulse/screens/today.png"
-                  width="720"
-                  height="1480"
-                  alt="Logix Pulse recording screen: resting HRV, heart rate, breathing rate and the raw ECG"
-                  decoding="async"
-                />
-              </figure>
-            </div>
-          </div>
-
-          <!-- Exhibit: the real ECG, drawn the way the app draws it -->
-          <figure class="exh pl-exh pl-block" id="pl-ecg" data-reveal>
-            <div class="exh-h">
-              <span class="k">Exhibit · Raw ECG</span>
-              <span class="k k--blue">Real · 130 Hz</span>
-            </div>
-            <div class="pl-stage">
-              <div class="pl-card">
-                <p class="pl-card-t">ECG</p>
-                <svg class="pl-svg" id="pl-ecg-svg" role="img" aria-label="Ten seconds of a real ECG from a Polar H10 chest strap, R peaks marked" xmlns="http://www.w3.org/2000/svg"></svg>
-                <p class="pl-nums" id="pl-ecg-nums">
-                  <span><b data-key="rmssd_ms">–</b> ms RMSSD</span><i aria-hidden="true">·</i>
-                  <span><b data-key="heart_rate_bpm">–</b> bpm</span><i aria-hidden="true">·</i>
-                  <span>breathing <b data-key="breathing_per_minute">–</b></span>
-                </p>
               </div>
             </div>
-            <figcaption class="exh-f">
-              <span class="k">A real morning check, unedited</span>
-              <button class="mini" id="pl-ecg-replay" type="button">Replay</button>
-            </figcaption>
-          </figure>
 
-          <!-- Exhibit: 28 mornings against the usual range (Today page chart) -->
-          <div class="pl-row">
-            <figure class="exh pl-exh" id="pl-trend" data-reveal>
-              <div class="exh-h">
-                <span class="k">Exhibit · Today</span>
-                <span class="k k--blue">28 mornings</span>
-              </div>
-              <div class="pl-stage">
-                <p class="pl-head" id="pl-trend-head">Resting HRV</p>
-                <p class="pl-sub">This week: HRV lower than your usual range, resting heart rate higher than usual</p>
-                <div class="pl-card pl-card--2">
-                  <p class="pl-card-t pl-card-t--sm">Resting HRV · last 28 mornings</p>
-                  <svg class="pl-svg" id="pl-trend-svg" role="img" aria-label="Resting HRV for 28 mornings against the usual range, with the 7-day average and resting heart rate" xmlns="http://www.w3.org/2000/svg"></svg>
-                  <div class="pl-dates"><span id="pl-trend-d0"></span><span id="pl-trend-d1"></span></div>
-                  <p class="pl-legend">● morning · ○ not counted, tap for why · — 7-day average</p>
-                </div>
-                <span class="pl-pbtn" aria-hidden="true">Morning check · 3 min</span>
-                <p class="pl-snack" id="pl-trend-snack" role="status" aria-live="polite"></p>
-              </div>
-              <figcaption class="exh-f">
-                <span class="k">Illustrative data</span>
-                <button class="mini" id="pl-trend-replay" type="button">Replay</button>
-              </figcaption>
+            <figure class="pl-phone pl-phone--solo" data-reveal data-delay="90">
+              <img
+                src="assets/pulse/screens/today.png"
+                width="720"
+                height="1480"
+                alt="Logix Pulse Today screen: resting HRV, heart rate, breathing rate and the raw ECG"
+                loading="lazy"
+                decoding="async"
+              />
             </figure>
-
-            <div class="pl-say" data-reveal data-delay="90">
-              <p class="k">Morning check · 3 min</p>
-              <p class="pl-big">Your usual range.</p>
-              <p class="pl-big pl-big--blue">Not a score.</p>
-            </div>
-          </div>
-
-          <!-- Exhibit: breathing rate from the strap's accelerometer -->
-          <div class="pl-row pl-row--flip">
-            <figure class="exh pl-exh" id="pl-breath" data-reveal>
-              <div class="exh-h">
-                <span class="k">Exhibit · Breathing</span>
-                <span class="k k--blue">12 min in 24 s</span>
-              </div>
-              <div class="pl-stage">
-                <div class="pl-card">
-                  <div class="pl-br-top">
-                    <div>
-                      <output class="pl-rate" id="pl-rate">–</output><span class="pl-unit">per minute</span>
-                      <p class="pl-sub" id="pl-rate-stage">&nbsp;</p>
-                    </div>
-                    <span class="pl-chip"><i aria-hidden="true"></i>accelerometer + ECG</span>
-                  </div>
-                  <svg class="pl-svg pl-wave" id="pl-wave-svg" role="img" aria-label="Chest motion from the strap's accelerometer during paced breathing" xmlns="http://www.w3.org/2000/svg"></svg>
-                  <svg class="pl-svg pl-rates" id="pl-rates-svg" role="img" aria-label="Breathing rate read per minute against the paced targets" xmlns="http://www.w3.org/2000/svg"></svg>
-                </div>
-              </div>
-              <figcaption class="exh-f">
-                <span class="k">Chest motion · our reading per minute</span>
-              </figcaption>
-            </figure>
-
-            <div class="pl-say" data-reveal data-delay="90">
-              <p class="k">Breathing rate</p>
-              <p class="pl-big">Breathing rate from the strap you already own.</p>
-              <p class="pl-big pl-big--blue">Measured, not guessed.</p>
-              <p class="k pl-proof">
-                Paced at 6 · 10 · 15 · 20 · 12 per minute,<br />
-                read 6.0 · 10.0 · 15.0 · 20.1 · 12.0
-              </p>
-            </div>
-          </div>
-
-          <!-- What nobody else does -->
-          <div class="pl-only" id="pl-only">
-            <p class="k k--blue" data-reveal>What nobody else does</p>
-            <div class="pl-only-i" data-reveal>
-              <span class="k">01</span>
-              <p>Your raw ECG, on your phone</p>
-            </div>
-            <div class="pl-only-i" data-reveal data-delay="80">
-              <span class="k">02</span>
-              <p>Breathing rate from the chest strap</p>
-            </div>
-            <div class="pl-only-i" data-reveal data-delay="160">
-              <span class="k">03</span>
-              <p>Beats left out of HRV, shown on the strip</p>
-            </div>
-            <div class="pl-free-wrap">
-              <p class="pl-free" id="pl-free">Free.</p>
-              <p class="k pl-free-note">Every current feature. Later ones may be paid.</p>
-            </div>
-          </div>
-
-          <!-- Release -->
-          <div class="pl-rel">
-            <div class="pl-rel-card" data-reveal>
-              <div>
-                <p class="pl-rel-t">Android</p>
-                <span class="live k k--blue"><i aria-hidden="true"></i>Releasing soon</span>
-              </div>
-              <span class="pl-badge">Google Play<br />soon</span>
-            </div>
-            <div class="pl-rel-card pl-rel-card--later" data-reveal data-delay="80">
-              <div>
-                <p class="pl-rel-t">iOS</p>
-                <span class="k">Later</span>
-              </div>
-              <span class="pl-badge">App Store<br />later</span>
-            </div>
-            <a class="btn btn--primary" href="mailto:admin@logixmotion.com?subject=Logix%20Pulse%20release" data-reveal data-delay="160">Tell me when <span class="arr">→</span></a>
           </div>
         </div>
       </section>
@@ -1440,7 +1051,7 @@
                 <span class="chip">Signal processing</span>
                 <span class="chip chip--free">Free today</span>
               </div>
-              <a class="btn btn--sm pl-see" href="#apps">See the app <span class="arr">→</span></a>
+              <a class="btn btn--sm pl-see" href="/pulse">See the app <span class="arr">→</span></a>
             </div>
           </article>
         </div>
@@ -1595,7 +1206,7 @@
             <div>
               <span class="k">Site</span>
               <ul>
-                <li><a href="#apps">Apps</a></li>
+                <li><a href="/pulse">Apps</a></li>
                 <li><a href="#work">Work</a></li>
                 <li><a href="#capabilities">Capabilities</a></li>
                 <li><a href="#studio">Studio</a></li>
@@ -1651,12 +1262,14 @@
     </main>
 
     <script src="https://unpkg.com/maplibre-gl@4.7.1/dist/maplibre-gl.js"></script>
+    <script src="assets/site.js" onerror="document.documentElement.classList.remove('anim')"></script>
 
     <script>
       /* ==========================================================
          Logixmotion - front-end behaviour
          anime.js drives: hero timeline, word stagger, SVG line
-         drawing, motion-path orbit, scroll reveals, ticker loop.
+         drawing, motion-path orbit, ticker loop. Scroll reveals
+         live in assets/site.js, shared with the Logix Pulse page.
          ========================================================== */
       (function () {
         "use strict";
@@ -1666,12 +1279,6 @@
           matchMedia("(prefers-reduced-motion: reduce)").matches;
         var HAS_ANIME = typeof anime !== "undefined";
         var MOTION = !REDUCED && HAS_ANIME;
-
-        // If anime failed to load, unhide everything that CSS pre-hid.
-        if (!MOTION) {
-          document.documentElement.classList.remove("anim");
-          document.documentElement.classList.add("no-anim");
-        }
 
         function $(s, c) {
           return (c || document).querySelector(s);
@@ -1741,32 +1348,6 @@
               loop: true,
             });
           }
-        })();
-
-        /* ---------- scroll reveals (IO → anime) ---------- */
-        (function reveals() {
-          var items = $all("[data-reveal]");
-          if (!MOTION || !("IntersectionObserver" in window)) return;
-          var io = new IntersectionObserver(
-            function (entries) {
-              entries.forEach(function (en) {
-                if (!en.isIntersecting) return;
-                io.unobserve(en.target);
-                anime({
-                  targets: en.target,
-                  opacity: [0, 1],
-                  translateY: [26, 0],
-                  duration: 820,
-                  delay: parseInt(en.target.getAttribute("data-delay") || 0, 10),
-                  easing: "easeOutCubic",
-                });
-              });
-            },
-            { threshold: 0.16, rootMargin: "0px 0px -60px 0px" }
-          );
-          items.forEach(function (el) {
-            io.observe(el);
-          });
         })();
 
         /* ==========================================================

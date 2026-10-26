@@ -18,6 +18,11 @@ const submissionsByIp = new Map();
 // Middleware
 app.use(bodyParser.json({ limit: '10kb' }));
 app.use(bodyParser.urlencoded({ extended: true, limit: '10kb' }));
+// Logix Pulse lives in pulse/index.html; serve it at /pulse directly instead of
+// express.static's redirect to /pulse/.
+app.get('/pulse', (req, res) => {
+    res.sendFile(path.join(__dirname, 'pulse', 'index.html'));
+});
 app.use(express.static(path.join(__dirname), { extensions: ['html'] }));
 
 // Email Transporter Configuration

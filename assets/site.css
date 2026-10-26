@@ -1,0 +1,250 @@
+/* ============================================================
+   LOGIXMOTION - shared styles (home page and Logix Pulse pages)
+   Paper & cobalt: a precision-instrument palette.
+   ============================================================ */
+:root {
+  --paper: #f3f4f1; /* cool chalk paper */
+  --paper-2: #fbfbf9; /* panel surface */
+  --ink: #16181b; /* near-black ink */
+  --ink-2: #0f1115; /* dark section ground */
+  --ink-soft: #565b62; /* secondary text */
+  --line: #d9dbd4; /* hairline rules */
+  --line-dark: #262b33; /* hairlines on dark */
+  --blue: #0d2fc4; /* cobalt - the one accent */
+  --blue-deep: #0a2399;
+  --blue-soft: #7b93ff; /* cobalt for dark ground */
+  --ok: #7fd99a;
+  --err: #ff8b8b;
+
+  --font-display: "Schibsted Grotesk", "Helvetica Neue", Arial, sans-serif;
+  --font-body: "Hanken Grotesk", "Helvetica Neue", Arial, sans-serif;
+  --font-mono: "Spline Sans Mono", "SFMono-Regular", Consolas, monospace;
+
+  --nav-h: 72px;
+}
+
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+html {
+  scroll-behavior: smooth;
+  scroll-padding-top: calc(var(--nav-h) + 16px);
+}
+
+body {
+  background: var(--paper);
+  color: var(--ink);
+  font: 400 1rem/1.65 var(--font-body);
+  -webkit-font-smoothing: antialiased;
+  text-rendering: optimizeLegibility;
+  overflow-x: hidden;
+}
+
+::selection {
+  background: var(--blue);
+  color: #fff;
+}
+
+img,
+svg {
+  display: block;
+  max-width: 100%;
+}
+
+a {
+  color: inherit;
+}
+
+:focus-visible {
+  outline: 2px solid var(--blue);
+  outline-offset: 3px;
+  border-radius: 1px;
+}
+
+.wrap {
+  max-width: 1180px;
+  margin-inline: auto;
+  padding-inline: clamp(20px, 4vw, 40px);
+}
+
+/* ---- micro label (mono kicker) ---- */
+.k {
+  font: 500 0.72rem/1.4 var(--font-mono);
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: var(--ink-soft);
+}
+.k--blue {
+  color: var(--blue);
+}
+
+/* ---- buttons ---- */
+.btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 10px;
+  font: 600 0.95rem/1 var(--font-body);
+  padding: 14px 22px;
+  border: 1px solid var(--ink);
+  border-radius: 2px;
+  background: transparent;
+  color: var(--ink);
+  text-decoration: none;
+  cursor: pointer;
+  transition: background 0.18s ease, color 0.18s ease, border-color 0.18s ease;
+}
+.btn:hover {
+  background: var(--ink);
+  color: var(--paper);
+}
+.btn--primary {
+  background: var(--blue);
+  border-color: var(--blue);
+  color: #fff;
+}
+.btn--primary:hover {
+  background: var(--blue-deep);
+  border-color: var(--blue-deep);
+  color: #fff;
+}
+.btn--sm {
+  padding: 10px 16px;
+  font-size: 0.88rem;
+}
+.btn .arr {
+  transition: transform 0.18s ease;
+}
+.btn:hover .arr {
+  transform: translateX(3px);
+}
+
+/* ---- brand (cobalt square + wordmark) ---- */
+.brand {
+  display: inline-flex;
+  align-items: center;
+  gap: 11px;
+  text-decoration: none;
+  font: 700 1.15rem/1 var(--font-display);
+  letter-spacing: -0.015em;
+}
+.brand-mark {
+  width: 11px;
+  height: 11px;
+  background: var(--blue);
+  flex: none;
+}
+
+/* ---- live status dot ---- */
+.live {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+}
+.live i {
+  width: 7px;
+  height: 7px;
+  border-radius: 50%;
+  background: var(--blue);
+  animation: livepulse 2.2s ease-in-out infinite;
+}
+@keyframes livepulse {
+  0%,
+  100% {
+    opacity: 1;
+  }
+  50% {
+    opacity: 0.25;
+  }
+}
+
+/* ---- sections ---- */
+.sec {
+  padding: clamp(72px, 9vw, 124px) 0;
+}
+html.anim [data-reveal] {
+  opacity: 0;
+  transform: translateY(26px);
+}
+.sec-head {
+  display: flex;
+  align-items: flex-end;
+  justify-content: space-between;
+  flex-wrap: wrap;
+  gap: 14px 24px;
+  border-top: 1px solid var(--ink);
+  padding-top: 18px;
+  margin-bottom: clamp(36px, 6vw, 62px);
+}
+
+/* ---- exhibit frame ---- */
+.exh {
+  border: 1px solid var(--ink);
+  border-radius: 2px;
+  background: var(--paper-2);
+  overflow: hidden;
+}
+.exh-h {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  padding: 10px 14px;
+  border-bottom: 1px solid var(--line);
+}
+.exh-f {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  padding: 9px 14px;
+  border-top: 1px solid var(--line);
+}
+.exh-f .k {
+  font-size: 0.64rem;
+  letter-spacing: 0.1em;
+}
+.mini {
+  font: 500 0.66rem/1 var(--font-mono);
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  border: 1px solid var(--ink);
+  border-radius: 2px;
+  background: transparent;
+  color: var(--ink);
+  padding: 7px 12px;
+  cursor: pointer;
+  transition: background 0.15s ease, color 0.15s ease;
+}
+.mini:hover {
+  background: var(--ink);
+  color: var(--paper);
+}
+
+/* visually hidden, but available to assistive tech */
+.sr-only {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  padding: 0;
+  margin: -1px;
+  overflow: hidden;
+  clip: rect(0, 0, 0, 0);
+  white-space: nowrap;
+  border: 0;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  html {
+    scroll-behavior: auto;
+  }
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+  }
+}
