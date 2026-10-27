@@ -19,24 +19,40 @@
   }
   if (!("IntersectionObserver" in window)) return;
 
+  var beats = document.querySelectorAll(".live path");
+  anime.set(beats, { strokeDashoffset: anime.setDashoffset });
+
   var io = new IntersectionObserver(
     function (entries) {
       entries.forEach(function (en) {
         if (!en.isIntersecting) return;
         io.unobserve(en.target);
-        anime({
-          targets: en.target,
-          opacity: [0, 1],
-          translateY: [26, 0],
-          duration: 820,
-          delay: parseInt(en.target.getAttribute("data-delay") || 0, 10),
-          easing: "easeOutCubic",
-        });
+        if (en.target.hasAttribute("data-reveal")) {
+          anime({
+            targets: en.target,
+            opacity: [0, 1],
+            translateY: [26, 0],
+            duration: 820,
+            delay: parseInt(en.target.getAttribute("data-delay") || 0, 10),
+            easing: "easeOutCubic",
+          });
+        } else {
+          anime({
+            targets: en.target.querySelector("path"),
+            strokeDashoffset: [anime.setDashoffset, 0],
+            duration: 900,
+            delay: 500,
+            easing: "easeInOutSine",
+          });
+        }
       });
     },
     { threshold: 0.16, rootMargin: "0px 0px -60px 0px" }
   );
   document.querySelectorAll("[data-reveal]").forEach(function (el) {
     io.observe(el);
+  });
+  beats.forEach(function (path) {
+    io.observe(path.closest(".live"));
   });
 })();
