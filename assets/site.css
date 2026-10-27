@@ -148,16 +148,6 @@ a {
   height: 7px;
   border-radius: 50%;
   background: var(--blue);
-  animation: livepulse 2.2s ease-in-out infinite;
-}
-@keyframes livepulse {
-  0%,
-  100% {
-    opacity: 1;
-  }
-  50% {
-    opacity: 0.25;
-  }
 }
 
 /* ---- sections ---- */
