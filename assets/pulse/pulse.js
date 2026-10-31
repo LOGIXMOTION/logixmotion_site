@@ -968,6 +968,27 @@
     });
   })();
 
+  /* ---------- video: nothing from YouTube until play is pressed ---------- */
+  (function video() {
+    var play = $("#pl-video-play");
+    if (!play) return;
+    play.addEventListener("click", function (event) {
+      event.preventDefault();
+      var frame = document.createElement("iframe");
+      frame.src =
+        "https://www.youtube-nocookie.com/embed/" +
+        encodeURIComponent(play.getAttribute("data-video")) +
+        "?autoplay=1&rel=0&playsinline=1";
+      frame.title = "Logix Pulse in 20 seconds";
+      frame.allow = "autoplay; encrypted-media; picture-in-picture; fullscreen";
+      frame.allowFullscreen = true;
+      // YouTube refuses to play embeds that send no referrer.
+      frame.referrerPolicy = "strict-origin-when-cross-origin";
+      play.parentNode.replaceChild(frame, play);
+      frame.focus();
+    });
+  })();
+
   /* ---------- data ---------- */
   trendExhibit();
   getJson("/assets/pulse/ecg-10s.json")
