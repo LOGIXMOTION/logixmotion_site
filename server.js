@@ -18,12 +18,36 @@ const submissionsByIp = new Map();
 // Middleware
 app.use(bodyParser.json({ limit: '10kb' }));
 app.use(bodyParser.urlencoded({ extended: true, limit: '10kb' }));
-// Logix Pulse lives in pulse/index.html; serve it at /pulse directly instead of
-// express.static's redirect to /pulse/.
-app.get('/pulse', (req, res) => {
-    res.sendFile(path.join(__dirname, 'pulse', 'index.html'));
+
+const SITE_ORIGIN = 'https://logixmotion.com';
+const PAGES = {
+    '/': 'index.html',
+    '/pulse': 'pulse/index.html',
+    '/pulse/privacy': 'pulse/privacy.html',
+};
+const PAGE_ALIASES = {
+    '/index.html': '/',
+    '/pulse/': '/pulse',
+    '/pulse/index.html': '/pulse',
+    '/pulse/privacy/': '/pulse/privacy',
+    '/pulse/privacy.html': '/pulse/privacy',
+};
+
+// One host and one address per page, so search engines index no duplicates.
+app.use((req, res, next) => {
+    const query = req.originalUrl.slice(req.path.length);
+    if (req.hostname === 'www.logixmotion.com') {
+        return res.redirect(301, SITE_ORIGIN + req.originalUrl);
+    }
+    if (PAGE_ALIASES[req.path]) {
+        return res.redirect(301, PAGE_ALIASES[req.path] + query);
+    }
+    next();
 });
-app.use(express.static(path.join(__dirname), { extensions: ['html'] }));
+
+// Only these folders are public; the project root holds .git, server code and node_modules.
+app.use('/assets', express.static(path.join(__dirname, 'assets'), { dotfiles: 'ignore' }));
+app.use(express.static(path.join(__dirname, 'public'), { dotfiles: 'ignore' }));
 
 // Email Transporter Configuration
 const transporter = nodemailer.createTransport({
@@ -76,9 +100,11 @@ function checkRateLimit(ip) {
 }
 
 // Routes
-app.get('/', (req, res) => {
-    res.sendFile(path.join(__dirname, 'index.html'));
-});
+for (const [route, file] of Object.entries(PAGES)) {
+    app.get(route, (req, res) => {
+        res.sendFile(path.join(__dirname, file));
+    });
+}
 
 app.get('/form-token', (req, res) => {
     const timestamp = Date.now();

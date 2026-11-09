@@ -1,0 +1,25 @@
+# LOGIXMOTION
+
+> LOGIXMOTION is a software and hardware engineering studio: embedded systems, sensor-driven products, and real-time map interfaces for asset tracking. Its own product is Logix Pulse, an Android app for the Polar H10 chest strap.
+
+## Logix Pulse
+
+Logix Pulse shows the raw ECG, resting HRV and breathing rate from a Polar H10 chest strap.
+
+- Every current feature is free. No account, no ads.
+- Raw ECG: records the H10's ECG at 130 Hz and detects the heartbeats from the ECG itself, not only from the strap's beat intervals.
+- Morning check: 3 minutes, showing resting HRV, heart rate and breathing rate against the user's own usual range over the last 28 mornings.
+- Breathing rate from the strap's motion sensor combined with the ECG.
+- Waveform measurements: QRS, PR, QT and QTc, ST level and T waves.
+- Threshold test: a guided ramp that estimates a threshold heart rate from DFA alpha1 and breathing rate, after Rogers, Schaffarczyk and Gronwald 2023. Not yet validated against a lab measurement.
+- Export: the raw ECG as CSV with every sample, or as PDF strips.
+- Accuracy is published in the app for every number (Settings, About, Accuracy): what it was tested against, on which data, the result and its limits. Examples, all at the H10's 130 Hz: 99.6 % of heartbeats found on the MIT-BIH Arrhythmia Database; RMSSD and SDNN identical to NeuroKit2; DFA alpha1 within 0.001 of NeuroKit2; QRS, PR and QT within 20 ms of cardiologists on 80, 78 and 67 % of recordings (QT Database, LUDB).
+- Android only. Needs a Polar H10: the Polar H9 does not stream the raw ECG.
+- Not a medical device.
+
+## Links
+
+- [Logix Pulse](https://logixmotion.com/pulse): features, a real morning check, screenshots and a 20-second screen recording.
+- [Privacy policy](https://logixmotion.com/pulse/privacy): what is sent to the server in Germany, when, and how to delete it.
+- [Google Play](https://play.google.com/store/apps/details?id=com.logixmotion.logixpulse): install the app.
+- [LOGIXMOTION](https://logixmotion.com/): the studio.
